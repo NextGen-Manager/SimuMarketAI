@@ -19,12 +19,16 @@ Repository ini baru diinisialisasi. Belum ada source code aplikasi. Kontrak prod
 
 ## Stack target
 
-- Next.js 14
-- React 18
-- TypeScript
-- Tailwind CSS
+- Next.js 16 (Active LTS)
+- React 19
+- TypeScript, `strict: true`
+- Tailwind CSS v4
 
-Versi tersebut mengikuti proposal awal dan akan dikunci setelah spike teknis. Jangan meng-upgrade major version tanpa ADR karena dapat memengaruhi jadwal kompetisi.
+Proposal awal menyebut Next.js 14. Versi itu mencapai end of life pada 26 Oktober 2025 dan tidak lagi menerima patch keamanan, sehingga baseline dinaikkan ke 16 melalui [ADR-002](https://github.com/NextGen-Manager/Docs/blob/main/docs/adr/ADR-002-frontend-framework-version.md).
+
+Next.js tidak memiliki jalur LTS terpisah: setiap major aktif selama ia terbaru, lalu berstatus maintenance sampai dua tahun sejak rilisnya. Versi 16 terbit Oktober 2025, jadi dukungannya berjalan sampai sekitar Oktober 2027 — melewati masa kompetisi.
+
+Ketika Next.js 17 terbit, **jangan langsung naik**. Versi 16 tetap menerima patch keamanan. Kenaikan major berikutnya memerlukan ADR baru.
 
 ## Batas arsitektur
 
