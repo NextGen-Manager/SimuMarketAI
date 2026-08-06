@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
+import { useAutoplay } from "@/demo/useAutoplay";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { StatusBadge, type FieldStatus } from "@/components/ui/StatusBadge";
 import { FieldEditable, FieldStatic } from "@/components/ui/Field";
@@ -11,13 +12,14 @@ import { Callout } from "@/components/ui/Metric";
 import { PageHead } from "@/components/layout/PageHead";
 import { formatIDR } from "@/lib/format";
 
-export default function Review() {
+export default function Konfirmasi() {
   const router = useRouter();
-  const { capai, profil, ubahProfil, fieldDiubah } = useDemoFlow();
+  const { tandaiSelesai, profil, ubahProfil, fieldDiubah } = useDemoFlow();
+  useAutoplay();
 
   useEffect(() => {
-    capai("review");
-  }, [capai]);
+    tandaiSelesai("konfirmasi");
+  }, [tandaiSelesai]);
 
   const biayaKosong = profil.asumsiFinansial.biayaOperasionalBulanan === null;
 
@@ -267,8 +269,8 @@ export default function Review() {
         ) : null}
         <Button
           onClick={() => {
-            capai("pasar");
-            router.push("/pasar");
+            tandaiSelesai("konfirmasi");
+            router.push("/analisis/proses");
           }}
         >
           Lanjut ke Simulasi Pasar

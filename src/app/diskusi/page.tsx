@@ -17,7 +17,7 @@ import { cn } from "@/lib/format";
 type Giliran = { peran: "anda" | "agent"; tanya?: string; jawab?: Jawaban };
 
 export default function Diskusi() {
-  const { capai } = useDemoFlow();
+  const { tandaiSelesai } = useDemoFlow();
   const [spesialis, setSpesialis] = useState<Spesialis>("finansial");
   const [riwayat, setRiwayat] = useState<Giliran[]>([]);
   const [menunggu, setMenunggu] = useState(false);
@@ -25,8 +25,8 @@ export default function Diskusi() {
   const akhirRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    capai("diskusi");
-  }, [capai]);
+    tandaiSelesai("diskusi");
+  }, [tandaiSelesai]);
 
   useEffect(() => {
     akhirRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });

@@ -6,6 +6,8 @@ import { useDemoFlow } from "@/demo/DemoFlowProvider";
 import { laporan } from "@/demo/data/report";
 import { Button } from "@/components/ui/Button";
 import { Callout, MeterBar, MetricTile } from "@/components/ui/Metric";
+import { ScoreGauge, interpretasiSkor } from "@/components/ui/Gauge";
+import { useAutoplay } from "@/demo/useAutoplay";
 import { cn, formatIDR, formatIDRShort } from "@/lib/format";
 
 function Bagian({
@@ -39,12 +41,13 @@ function Bagian({
 
 export default function Laporan() {
   const router = useRouter();
-  const { capai, varian, setVarian } = useDemoFlow();
+  const { tandaiSelesai, varian, setVarian } = useDemoFlow();
   const parsial = varian === "parsial";
+  useAutoplay();
 
   useEffect(() => {
-    capai("laporan");
-  }, [capai]);
+    tandaiSelesai("laporan");
+  }, [tandaiSelesai]);
 
   /**
    * Varian dibaca dari context, bukan useSearchParams — pemakaian hook itu
@@ -75,7 +78,7 @@ export default function Laporan() {
           <Button
             variant="secondary"
             className="px-3 py-2 text-[13px]"
-            onClick={() => router.push("/pasar")}
+            onClick={() => router.push("/analisis/input")}
           >
             Buat Variasi
           </Button>
@@ -108,25 +111,26 @@ export default function Laporan() {
         </div>
       ) : null}
 
-      {/* 01 Skor */}
+      {/* 01 Skor — gauge sesuai proposal §7.4 */}
       <Bagian no="01" judul="Launch Readiness Score">
-        <div className="flex flex-wrap items-center gap-6">
-          <div className="flex items-baseline gap-1">
-            <span className="tnum text-[56px] font-bold leading-none text-amber-600">
-              {r.skor.nilai}
-            </span>
-            <span className="text-[16px] font-medium text-ink-400">/100</span>
-          </div>
-          <div className="rounded-[8px] border border-warn-600/30 bg-warn-50 px-3.5 py-2 text-[13.5px] font-semibold text-warn-600">
-            {r.skor.interpretasi}
+        <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-8">
+          <ScoreGauge
+            nilai={r.skor.nilai}
+            interpretasi={interpretasiSkor(r.skor.nilai)}
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-[14px] leading-relaxed text-ink-500">
+              Rentang interpretasi mengikuti aturan skor: 80–100 sangat layak,
+              65–79 layak dengan mitigasi, 50–64 perlu evaluasi ulang, di bawah
+              50 tidak disarankan.
+            </p>
+            <p className="mt-3 font-mono text-[11.5px] text-ink-400">
+              {r.skor.ruleVersion} · {r.skor.catatanVersi}
+            </p>
           </div>
         </div>
 
-        <p className="mt-3 font-mono text-[11.5px] text-ink-400">
-          {r.skor.ruleVersion} · {r.skor.catatanVersi}
-        </p>
-
-        <div className="mt-5 space-y-3">
+        <div className="mt-6 space-y-3">
           {r.skor.dimensi.map((d) => {
             const takDinilai = parsial && d.nama === "Potensi Permintaan";
             return (
@@ -394,7 +398,7 @@ export default function Laporan() {
       <div className="flex justify-end gap-3 border-t border-line pt-8">
         <Button
           onClick={() => {
-            capai("diskusi");
+            tandaiSelesai("diskusi");
             router.push("/diskusi");
           }}
         >

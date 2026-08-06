@@ -9,18 +9,33 @@ import {
   type ReactNode,
 } from "react";
 import { profilAwal, type Profil } from "./data/profile";
-import { stepIndex, type StepId } from "./steps";
+import { produkAwal, hariTercatatAwal, type Produk } from "./data/transactions";
+import { modulWajib } from "./data/education";
+import type { JourneyId } from "./journeys";
 
 export type Varian = "normal" | "parsial";
 
 type Ctx = {
-  /** Langkah terjauh yang sudah dicapai — mengunci stepper ke depan. */
-  maxStep: number;
-  capai: (id: StepId) => void;
+  journey: JourneyId | null;
+  pilihJourney: (j: JourneyId) => void;
+
+  langkahSelesai: Set<string>;
+  tandaiSelesai: (id: string) => void;
 
   profil: Profil;
   ubahProfil: (path: string, nilai: string | number) => void;
   fieldDiubah: Set<string>;
+
+  modulSelesai: Set<string>;
+  selesaikanModul: (id: string) => void;
+  gerbangTerbuka: boolean;
+
+  produk: Produk[];
+  tambahProduk: (p: Produk) => void;
+  hariTercatat: number;
+  tambahHari: () => void;
+  transaksiHariIni: { produkId: string; jumlah: number; harga: number }[];
+  catatTransaksi: (t: { produkId: string; jumlah: number; harga: number }) => void;
 
   varian: Varian;
   setVarian: (v: Varian) => void;
@@ -34,18 +49,25 @@ type Ctx = {
 const DemoCtx = createContext<Ctx | null>(null);
 
 export function DemoFlowProvider({ children }: { children: ReactNode }) {
-  const [maxStep, setMaxStep] = useState(0);
+  const [journey, setJourney] = useState<JourneyId | null>(null);
+  const [langkahSelesai, setLangkahSelesai] = useState<Set<string>>(new Set());
   const [profil, setProfil] = useState<Profil>(profilAwal);
   const [fieldDiubah, setFieldDiubah] = useState<Set<string>>(new Set());
+  const [modulSelesai, setModulSelesai] = useState<Set<string>>(new Set());
+  const [produk, setProduk] = useState<Produk[]>(produkAwal);
+  const [hariTercatat, setHariTercatat] = useState(hariTercatatAwal);
+  const [transaksiHariIni, setTransaksiHariIni] = useState<
+    { produkId: string; jumlah: number; harga: number }[]
+  >([]);
   const [varian, setVarian] = useState<Varian>("normal");
   const [autoplay, setAutoplay] = useState(false);
 
-  const capai = useCallback((id: StepId) => {
-    const i = stepIndex(id);
-    setMaxStep((m) => (i > m ? i : m));
+  const pilihJourney = useCallback((j: JourneyId) => setJourney(j), []);
+
+  const tandaiSelesai = useCallback((id: string) => {
+    setLangkahSelesai((s) => new Set(s).add(id));
   }, []);
 
-  /** Edit inline benar-benar mengubah nilai yang tampil. */
   const ubahProfil = useCallback((path: string, nilai: string | number) => {
     setProfil((prev) => {
       const next = structuredClone(prev) as Record<string, unknown>;
@@ -60,28 +82,86 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     setFieldDiubah((s) => new Set(s).add(path));
   }, []);
 
+  const selesaikanModul = useCallback((id: string) => {
+    setModulSelesai((s) => new Set(s).add(id));
+  }, []);
+
+  /** Gerbang F-09: seluruh modul wajib harus selesai. */
+  const gerbangTerbuka = modulWajib.every((m) => modulSelesai.has(m));
+
+  const tambahProduk = useCallback((p: Produk) => {
+    setProduk((prev) => [...prev, p]);
+  }, []);
+
+  const catatTransaksi = useCallback(
+    (t: { produkId: string; jumlah: number; harga: number }) => {
+      setTransaksiHariIni((prev) => [t, ...prev]);
+    },
+    [],
+  );
+
+  const tambahHari = useCallback(() => {
+    setHariTercatat((h) => h + 1);
+  }, []);
+
   const reset = useCallback(() => {
-    setMaxStep(0);
+    setJourney(null);
+    setLangkahSelesai(new Set());
     setProfil(profilAwal);
     setFieldDiubah(new Set());
+    setModulSelesai(new Set());
+    setProduk(produkAwal);
+    setHariTercatat(hariTercatatAwal);
+    setTransaksiHariIni([]);
     setVarian("normal");
     setAutoplay(false);
   }, []);
 
   const value = useMemo(
     () => ({
-      maxStep,
-      capai,
+      journey,
+      pilihJourney,
+      langkahSelesai,
+      tandaiSelesai,
       profil,
       ubahProfil,
       fieldDiubah,
+      modulSelesai,
+      selesaikanModul,
+      gerbangTerbuka,
+      produk,
+      tambahProduk,
+      hariTercatat,
+      tambahHari,
+      transaksiHariIni,
+      catatTransaksi,
       varian,
       setVarian,
       autoplay,
       setAutoplay,
       reset,
     }),
-    [maxStep, capai, profil, ubahProfil, fieldDiubah, varian, autoplay, reset],
+    [
+      journey,
+      pilihJourney,
+      langkahSelesai,
+      tandaiSelesai,
+      profil,
+      ubahProfil,
+      fieldDiubah,
+      modulSelesai,
+      selesaikanModul,
+      gerbangTerbuka,
+      produk,
+      tambahProduk,
+      hariTercatat,
+      tambahHari,
+      transaksiHariIni,
+      catatTransaksi,
+      varian,
+      autoplay,
+      reset,
+    ],
   );
 
   return <DemoCtx.Provider value={value}>{children}</DemoCtx.Provider>;

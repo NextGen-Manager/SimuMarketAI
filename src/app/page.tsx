@@ -1,68 +1,45 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useDemoFlow } from "@/demo/DemoFlowProvider";
-import { totalDetik } from "@/demo/useAutoplay";
-import { Button, ButtonLink } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 
 const tahapan = [
   {
     no: "01",
-    judul: "Masukkan rencana usaha",
-    isi: "Unggah proposal yang sudah ada, atau isi manual. Hasil pembacaan AI selalu ditampilkan untuk kamu koreksi lebih dulu.",
+    judul: "Masukkan rencana atau catat penjualan",
+    isi: "Calon pengusaha mengisi lokasi, harga, dan modal. Pemilik usaha mencatat transaksi harian.",
   },
   {
     no: "02",
-    judul: "Panel agent berdeliberasi",
-    isi: "Empat council—pasar, persona pelanggan, finansial, dan laporan—saling mengkritik secara terbuka. Setiap klaim bisa ditantang agent lain.",
+    judul: "Empat agent berdeliberasi",
+    isi: "Market Analyst, Customer Persona, Finance, dan Report saling mengkritik secara terbuka. Setiap klaim bisa ditantang agent lain.",
   },
   {
     no: "03",
-    judul: "Laporan dengan sumber terlihat",
-    isi: "Skor kelayakan, proyeksi finansial, dan rekomendasi—lengkap dengan sumber data, waktu pengambilan, dan tingkat keyakinan tiap angka.",
+    judul: "Hasil dengan sumber terlihat",
+    isi: "Skor kelayakan atau analitik penjualan — lengkap dengan sumber data, waktu pengambilan, dan tingkat keyakinan tiap angka.",
   },
 ];
 
 export default function Landing() {
-  const router = useRouter();
-  const { setAutoplay, capai, reset } = useDemoFlow();
-
-  function putarDemo() {
-    reset();
-    capai("upload");
-    setAutoplay(true);
-    router.push("/upload");
-  }
-
   return (
     <div className="mx-auto max-w-[1200px] px-6">
-      {/* Hero */}
       <section className="border-b border-line py-20 sm:py-28">
         <div className="max-w-[46rem]">
           <p className="label-eyebrow mb-5">
             Decision Support System · UMKM F&amp;B Jabodetabek
           </p>
           <h1 className="text-[38px] font-bold leading-[1.1] tracking-[-0.02em] text-ink-900 text-balance sm:text-[52px]">
-            Uji rencana usahamu sebelum modal keluar.
+            Keputusan usaha yang berbasis data, bukan firasat.
           </h1>
           <p className="mt-6 max-w-[38rem] text-[17px] leading-relaxed text-ink-500">
-            SimuMarket AI menjalankan simulasi multi-agent atas rencana usahamu,
-            lalu mengeluarkan skor kesiapan, proyeksi finansial, dan rekomendasi
-            — dengan sumber dan tingkat keyakinan yang bisa kamu periksa satu per
-            satu.
+            SimuMarket AI membantu pelaku UMKM F&amp;B di Jabodetabek menguji
+            rencana sebelum modal keluar, dan membaca data penjualan setelah
+            usaha berjalan.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Button onClick={putarDemo} className="px-5 py-3">
-              Putar Demo Otomatis
+          <div className="mt-9">
+            <ButtonLink href="/demo" className="px-6 py-3.5 text-[15px]">
+              Mulai Demo
               <span aria-hidden>→</span>
-            </Button>
-            <ButtonLink href="/upload" variant="secondary" className="px-5 py-3">
-              Jalankan Sendiri
             </ButtonLink>
-            <span className="text-[13px] text-ink-400">
-              sekitar {totalDetik} detik, berhenti kapan saja
-            </span>
           </div>
 
           <p className="mt-8 max-w-[40rem] rounded-[10px] border border-line border-l-[3px] border-l-amber-600 bg-surface px-4 py-3 text-[13.5px] leading-relaxed text-ink-500">
@@ -74,7 +51,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Tahapan */}
       <section className="py-16 sm:py-20">
         <h2 className="mb-10 text-[22px] font-semibold tracking-tight text-ink-900">
           Yang akan kamu lihat
@@ -96,7 +72,6 @@ export default function Landing() {
         </ol>
       </section>
 
-      {/* Batas produk */}
       <section className="border-t border-line py-16">
         <div className="grid gap-10 sm:grid-cols-[1fr_1.4fr]">
           <h2 className="text-[22px] font-semibold tracking-tight text-ink-900 text-balance">

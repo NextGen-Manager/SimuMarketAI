@@ -16,24 +16,24 @@ const subTahap = [
 
 export default function Analisis() {
   const router = useRouter();
-  const { capai } = useDemoFlow();
+  const { tandaiSelesai } = useDemoFlow();
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    capai("analisis");
-  }, [capai]);
+    tandaiSelesai("baca");
+  }, [tandaiSelesai]);
 
   useEffect(() => {
     if (idx >= subTahap.length) {
       const t = setTimeout(() => {
-        capai("review");
-        router.push("/review");
+        tandaiSelesai("konfirmasi");
+        router.push("/analisis/konfirmasi");
       }, 700);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setIdx((i) => i + 1), subTahap[idx].ms);
     return () => clearTimeout(t);
-  }, [idx, router, capai]);
+  }, [idx, router, tandaiSelesai]);
 
   const persen = Math.round((idx / subTahap.length) * 100);
 

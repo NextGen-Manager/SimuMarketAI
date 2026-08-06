@@ -13,12 +13,12 @@ const contoh = [
 
 export default function Upload() {
   const router = useRouter();
-  const { capai } = useDemoFlow();
+  const { tandaiSelesai } = useDemoFlow();
   const [terunggah, setTerunggah] = useState(false);
 
   useEffect(() => {
-    capai("upload");
-  }, [capai]);
+    tandaiSelesai("upload");
+  }, [tandaiSelesai]);
 
   return (
     <div className="mx-auto max-w-[880px] px-6 py-14">
@@ -43,7 +43,7 @@ export default function Upload() {
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button onClick={() => setTerunggah(true)}>Pakai dokumen contoh</Button>
-            <Button variant="secondary" onClick={() => router.push("/review")}>
+            <Button variant="secondary" onClick={() => router.push("/analisis/konfirmasi")}>
               Isi manual saja
             </Button>
           </div>
@@ -76,8 +76,8 @@ export default function Upload() {
           <div className="flex justify-end pt-4">
             <Button
               onClick={() => {
-                capai("analisis");
-                router.push("/analisis");
+                tandaiSelesai("baca");
+                router.push("/analisis/baca");
               }}
             >
               Baca Dokumen

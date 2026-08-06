@@ -1,378 +1,349 @@
-# Rencana Bangun Demo Klik-Melalui
+# Rencana Demo v2 — Dua Journey
 
-Rencana kerja untuk membangun mock yang memperlihatkan seluruh alur aplikasi dari sisi pengguna, tanpa backend dan tanpa AI. Konsep dan aturan visual ada di `Docs/docs/13-ui-system-and-mock-plan.md`; dokumen ini adalah pemecahan kerjanya menjadi file dan urutan.
+Revisi rencana demo setelah dua journey pengguna ditetapkan. Dokumen ini menggantikan rencana v1 yang hanya mencakup satu alur.
 
-## Ruang lingkup
+Gaya visual, komponen, dan aturan warna tidak berubah — tetap mengikuti `Docs/docs/13-ui-system-and-mock-plan.md`. Panel debat council tetap menjadi inti demo.
 
-**Yang dibangun.** Layar S1–S7 dapat diklik berurutan, layar simulasi bergerak mengikuti skrip, laporan punya varian normal dan parsial, tombol Putar Otomatis menjalankan seluruh alur, ditambah layar transaksi dan review struk.
-
-**Yang tidak dibangun.** Perhitungan apa pun, panggilan AI, validasi skema, autentikasi nyata, penyimpanan permanen.
-
-Seluruh angka yang tampil adalah teks yang sudah ditulis lebih dulu. Plumbing data di sini boleh dibuang seluruhnya saat backend datang; yang bertahan adalah token dan komponen.
-
-## Prasyarat
-
-```bash
-cd SimuMarketAI
-npx create-next-app@latest . --typescript --tailwind --app --eslint
-```
-
-Menghasilkan Next.js 16 + React 19 + Tailwind v4, sesuai ADR-002. Tidak ada dependency tambahan yang wajib — tanpa state library, tanpa data-fetching library, tanpa pustaka animasi.
-
-Font Plus Jakarta Sans dan Source Serif 4 dipasang lewat `next/font/google`.
-
-## Struktur akhir
-
-```text
-src/
-  app/
-    layout.tsx              shell + header + DemoFlowProvider
-    page.tsx                dashboard, titik masuk
-    upload/page.tsx         S1
-    analisis/page.tsx       S2
-    review/page.tsx         S3
-    pasar/page.tsx          S4
-    simulasi/page.tsx       S5
-    laporan/page.tsx        S6  (?hasil=parsial untuk varian)
-    diskusi/page.tsx        S7
-    transaksi/page.tsx      input manual + daftar
-    transaksi/struk/page.tsx review OCR
-  components/
-    ui/                     primitif visual, dipakai ulang di produksi nanti
-    layout/                 Header, StepperNav, DemoBadge
-    simulasi/               FeedPanel, CouncilPanel, DistribusiPanel, AgentCard
-    laporan/                ScoreBlock, ConfidenceBlock, EvidenceTable, PartialBanner
-  demo/
-    data/                   seluruh isi teks dan angka contoh
-    DemoFlowProvider.tsx    langkah aktif, hasil edit, varian
-    usePlayback.ts          pemutar skrip simulasi
-    useAutoplay.ts          Putar Otomatis
-    steps.ts               daftar urutan langkah + rute
-  lib/
-    format.ts               formatIDR, formatTanggal
-```
-
-`components/ui` adalah satu-satunya sumber primitif visual. Tidak ada feature yang membuat varian lokalnya sendiri.
+Autentikasi dikesampingkan untuk sementara. Demo masuk langsung ke dashboard.
 
 ---
 
-## Tahap 1 — Fondasi visual
+## Dua journey
 
-**Tujuan.** Token dan primitif siap sebelum satu layar pun dibuat, supaya tidak ada nilai warna lepas yang harus dirapikan belakangan.
+| | Journey A | Journey B |
+|---|---|---|
+| Siapa | Calon pengusaha F&B | Pemilik usaha F&B yang sudah jalan |
+| Pertanyaan | "Layak tidak saya buka di sini?" | "Produk mana yang jalan, mana yang tidak?" |
+| Modul | Market Analysis | Transaction Management |
+| Keluaran | Launch Readiness Report | Dashboard analitik + rekomendasi |
+| Gerbang | Modul edukasi wajib selesai | Minimal 7 hari data |
+| Status | ~70% sudah dibangun | belum dibangun sama sekali |
 
-**File.**
-
-```text
-src/app/globals.css        @theme berisi seluruh token
-src/app/layout.tsx         font, lang="id", shell dasar
-src/lib/format.ts          formatIDR, formatTanggal, formatPersen
-src/components/ui/         Card, StatusBadge, MetricTile, MeterBar,
-                           Button, FieldRow, EmptyState, ErrorState, Skeleton
-```
-
-`globals.css` menyalin token dari dokumen 13 apa adanya:
-
-```css
-@import "tailwindcss";
-
-@theme {
-  --color-ink-900:  #101413;
-  --color-ink-700:  #2E3634;
-  --color-ink-500:  #5C6663;
-  --color-ink-400:  #8A9391;
-  --color-line:     #E4E7E6;
-  --color-canvas:   #F7F9F8;
-  --color-teal-700: #0E5A63;
-  --color-teal-50:  #E8F2F2;
-  --color-amber-600:#D4610A;
-  --color-amber-50: #FDF1E7;
-  --color-success-600:#1B7A4B;
-  --color-info-600:   #2A6BA8;
-  --color-warn-600:   #B25D02;
-  --color-danger-600: #B3261E;
-}
-```
-
-**Selesai bila.** Satu halaman contoh menampilkan seluruh primitif dalam setiap state, dan tidak ada hex mentah di luar `globals.css`.
-
-**Ukuran.** Sedang. Ini tahap yang paling menentukan kualitas akhir — jangan diburu.
+Keduanya bertemu di dashboard, dan Journey B pada akhirnya memberi makan Journey A — transaksi nyata menjadi bukti berkualitas tinggi untuk analisis berikutnya.
 
 ---
 
-## Tahap 2 — Shell dan navigasi
+## Yang berubah dari yang sudah dibangun
 
-**Tujuan.** Kerangka yang membuat seluruh layar terasa satu aplikasi.
+Journey A yang ditetapkan **tidak dimulai dari unggah dokumen**, melainkan dari dashboard lalu form terstruktur. Ini perbedaan utama terhadap demo yang sudah ada.
 
-**File.**
-
-```text
-src/components/layout/Header.tsx
-src/components/layout/StepperNav.tsx
-src/components/layout/DemoBadge.tsx
-src/demo/steps.ts
-src/demo/DemoFlowProvider.tsx
-```
-
-`steps.ts` adalah sumber urutan tunggal:
-
-```ts
-export const steps = [
-  { id: 'upload',   label: 'Upload Dokumen', href: '/upload'   },
-  { id: 'analisis', label: 'Analisis AI',    href: '/analisis' },
-  { id: 'review',   label: 'Review Bisnis',  href: '/review'   },
-  { id: 'pasar',    label: 'Setup Pasar',    href: '/pasar'    },
-  { id: 'simulasi', label: 'Simulasi',       href: '/simulasi' },
-  { id: 'laporan',  label: 'Laporan',        href: '/laporan'  },
-  { id: 'diskusi',  label: 'Diskusi',        href: '/diskusi'  },
-] as const;
-```
-
-`DemoFlowProvider` menyimpan tiga hal saja: langkah terjauh yang sudah dicapai, hasil edit pengguna di layar Review, dan varian hasil (`normal` atau `parsial`). Tidak lebih.
-
-**Aturan stepper.** Langkah yang sudah dilewati dapat diklik untuk kembali. Langkah di depan langkah aktif dinonaktifkan. Ini mencegah demo melompat ke laporan sebelum simulasi terlihat berjalan.
-
-**Selesai bila.** Bisa berpindah antar tujuh langkah, stepper menandai posisi dengan benar, badge `MODE DEMO` tampil.
-
-**Ukuran.** Kecil.
-
----
-
-## Tahap 3 — S3 Review Bisnis
-
-Dikerjakan lebih dulu daripada S1 dan S2 karena layar ini yang paling banyak komponennya dan paling sering dilihat saat demo.
-
-**File.**
-
-```text
-src/app/review/page.tsx
-src/demo/data/profile.ts
-```
-
-`profile.ts` berisi lima kartu beserta status tiap field:
-
-```ts
-export const profil = {
-  ringkasanUsaha: {
-    status: 'terdeteksi',
-    namaIde: 'Kopi Kenangan Senja',
-    jenisBisnis: 'F&B – Kedai Kopi Spesialti',
-    deskripsi: 'Kedai kopi berkonsep modern minimalis…',
-    usp: 'Menggunakan 100% biji kopi petani lokal…',
-  },
-  targetPelanggan: {
-    status: 'perlu-dikonfirmasi',
-    segmen: 'Mahasiswa & Pekerja Lepas',
-    lokasi: 'Bandung Selatan (radius 5 km)',
-    kebiasaan: 'Mencari tempat dengan WiFi cepat…',
-  },
-  produkHarga: { status: 'terdeteksi', items: [ /* 3 produk */ ] },
-  asumsiFinansial: {
-    status: 'perlu-dilengkapi',
-    modalAwal: 150_000_000,
-    biayaOperasional: null,          // sengaja kosong
-    targetHarian: '50 – 70 cup',
-  },
-  kompetitor: { status: 'terdeteksi', sumber: 'OpenStreetMap',
-                diambil: '3 hari lalu', items: [ /* 2 kompetitor */ ] },
-};
-```
-
-**Yang harus terasa nyata.** Edit inline benar-benar mengubah nilai yang tampil dan menaikkan status field menjadi terkonfirmasi. Ini interaksi yang paling sering dicoba juri.
-
-**Jangan lupa.** Blok "Kesiapan data" di bawah kartu, yang menerjemahkan `biayaOperasional: null` menjadi kalimat konsekuensi. Blok ini yang membedakan demo jujur dari demo yang menyembunyikan lubang data.
-
-**Selesai bila.** Lima kartu tampil dengan tiga jenis badge, edit inline bekerja, blok kesiapan data muncul, tombol lanjut aktif.
-
-**Ukuran.** Besar.
-
----
-
-## Tahap 4 — S5 Simulasi
-
-Layar dengan nilai demo tertinggi. Kerjakan setelah Review supaya komponen kartu sudah ada.
-
-**File.**
-
-```text
-src/app/simulasi/page.tsx
-src/components/simulasi/FeedPanel.tsx
-src/components/simulasi/CouncilPanel.tsx
-src/components/simulasi/DistribusiPanel.tsx
-src/components/simulasi/AgentCard.tsx
-src/components/simulasi/StageList.tsx
-src/demo/data/simulation.ts
-src/demo/usePlayback.ts
-```
-
-`usePlayback` sederhana saja: indeks berjalan maju melalui `langkah[]`, satu `setTimeout` per langkah memakai `ms` masing-masing, mengembalikan `{ langkahTerlihat, stageAktif, persen, selesai }`. Bisa dijeda dan diulang.
-
-Bentuk `simulation.ts` dan aturan render per jenis action sudah ditetapkan di dokumen 13 — ikuti tabelnya. Ringkasnya:
-
-| `action` | Bentuk |
+| Layar sekarang | Nasib |
 |---|---|
-| `comment` | kartu penuh dengan kutipan |
-| `challenge` | kartu dengan garis kiri, label menantang `#ID` |
-| `like` | satu baris gabungan beberapa agent |
-| `purchase` | satu baris beraksen amber |
-| `ringkasan` | baris abu-abu akhir round |
-| `tool` | kartu sistem bergaya mono |
+| `/` landing | tetap, tambah tombol masuk dashboard |
+| `/upload` | **turun status** jadi jalur pintas opsional, bukan langkah wajib |
+| `/analisis` (ekstraksi dokumen) | **hanya dipakai** kalau pengguna lewat jalur unggah |
+| `/review` | **dipertahankan, dialihfungsikan** jadi konfirmasi sebelum run |
+| `/pasar` | **dipecah** jadi tiga langkah form sesuai journey |
+| `/simulasi` | tetap, tambah strip empat agent yang terlihat |
+| `/laporan` | tetap, tambah aksi bandingkan lokasi |
+| `/diskusi` | tetap (di luar journey inti, nilai tambah demo) |
 
-**Tiga tampilan.** Feed default selama berjalan, Council default setelah selesai, Distribusi menampilkan baseline versus final.
+### Kenapa `/upload` tidak dihapus
 
-**Yang sering terlewat.** Auto-scroll harus berhenti ketika pengguna menggulir ke atas, dan disclaimer respons sintetis melekat di bawah panel.
+Journey A tidak menyebutnya, tetapi layar itu sudah jadi dan menawarkan jalan masuk yang jauh lebih cepat bagi orang yang sudah punya proposal. Menghapusnya membuang kerja tanpa alasan.
 
-**Selesai bila.** Skrip berjalan sampai selesai, tiga tampilan dapat ditukar, thread `challenge` bersarang di bawah klaim yang dirujuk.
+Solusinya: jadikan **pilihan kedua yang jelas**, bukan langkah pertama yang wajib. Di layar pemilihan lokasi ada tautan kecil "Punya proposal? Unggah untuk mengisi otomatis". Jalur itu bermuara ke layar konfirmasi yang sama.
 
-**Ukuran.** Besar.
-
----
-
-## Tahap 5 — S6 Laporan
-
-**File.**
-
-```text
-src/app/laporan/page.tsx
-src/components/laporan/ScoreBlock.tsx
-src/components/laporan/ConfidenceBlock.tsx
-src/components/laporan/EvidenceTable.tsx
-src/components/laporan/PartialBanner.tsx
-src/demo/data/report.ts
-```
-
-Delapan bagian bernomor dengan urutan tetap. Bagian 02 Evidence Confidence dan 08 Bukti & Keterbatasan **tidak boleh collapsed secara default** — keduanya pemenuhan F-16.
-
-Varian parsial dibaca dari query param:
-
-```tsx
-const parsial = useSearchParams().get('hasil') === 'parsial';
-```
-
-Saat parsial: banner di atas, bagian simulasi berubah menjadi status tidak tersedia tetapi tetap ada di daftar isi, dimensi Potensi Permintaan ditandai tidak dapat dinilai beserta bobotnya.
-
-**Selesai bila.** Kedua varian tampil benar, disclaimer melekat, angka finansial dapat dibuka sumbernya.
-
-**Ukuran.** Besar.
+Kalau kamu lebih suka demo yang benar-benar bersih satu jalur saja, bilang — menghapus dua rute itu pekerjaan lima menit.
 
 ---
 
-## Tahap 6 — S7 Diskusi
-
-**File.**
+## Peta layar baru
 
 ```text
-src/app/diskusi/page.tsx
-src/demo/data/discussion.ts
+/                         landing — satu tombol "Mulai Demo"
+/demo                     pilih journey A atau B
+/dashboard                tiga modul, yang relevan disorot
+
+JOURNEY A — Market Analysis
+/analisis/input           wizard 3 langkah: lokasi, harga, modal
+/edukasi                  gerbang modul wajib
+/analisis/konfirmasi      ringkasan input sebelum run   (bekas /review)
+/analisis/proses          empat agent berjalan          (bekas /simulasi)
+/laporan                  Launch Readiness Report
+/laporan/bandingkan       bandingkan dua lokasi
+/diskusi                  tanya agent
+
+  jalur pintas opsional
+/upload → /analisis/baca → /analisis/konfirmasi
+
+JOURNEY B — Transaction Management
+/transaksi                ringkasan + tombol catat
+/transaksi/produk         daftar produk dan harga
+/transaksi/catat          input transaksi harian
+/transaksi/analitik       dashboard analitik (terkunci < 7 hari)
 ```
-
-Pertanyaan dan jawaban sudah ditulis berpasangan. Pengguna memilih dari beberapa pertanyaan yang disarankan; mengetik bebas menampilkan jawaban umum yang jujur menyatakan ini mode demo.
-
-```ts
-export const diskusi = [
-  {
-    spesialis: 'finansial',
-    tanya: 'Bagaimana jika saya memberi promo Beli 1 Gratis 1 di minggu pertama?',
-    jawab: 'Margin kotor minggu pertama turun ke sekitar 15%…',
-    toolCall: 'finance-calculator · call #FC-118',
-    aksi: ['Lihat Simulasi Arus Kas', 'Jalankan sebagai Variasi'],
-  },
-];
-```
-
-Atribusi tool call wajib tampil pada jawaban yang memuat angka — ini pengganti badge "verified" yang diputuskan sebelumnya.
-
-**Selesai bila.** Tiga tab spesialis berfungsi, jawaban muncul dengan jeda pendek supaya terasa hidup, atribusi tool call tampil.
-
-**Ukuran.** Sedang.
 
 ---
 
-## Tahap 7 — S1, S2, S4 dan Loop 2
+## Titik masuk
 
-Layar yang lebih ringan, dikerjakan setelah tiga layar besar selesai.
+### `/` landing — **disederhanakan**
+
+Satu tombol utama: **Mulai Demo**. Penjelasan produk dipangkas seperlunya. Autoplay tidak lagi dipicu dari sini karena kini ada dua journey yang bisa diputar.
+
+### `/demo` — pilih journey · **baru**
+
+Dua kartu besar berdampingan. Layar ini yang membuat klaim "dua jenis pengguna" terlihat, bukan hanya tersirat.
 
 ```text
-src/app/upload/page.tsx      dropzone palsu + tombol "Pakai contoh"
-src/app/analisis/page.tsx    sub-tahap berjalan ~6 detik lalu pindah otomatis
-src/app/pasar/page.tsx       form terisi sebagian + pratinjau kualitas bukti
-src/app/transaksi/page.tsx   input cepat + daftar + kartu insight
-src/app/transaksi/struk/page.tsx  split view gambar dan hasil ekstraksi
-src/demo/data/transactions.ts
+┌────────────────────────────┐  ┌────────────────────────────┐
+│ JOURNEY A                  │  │ JOURNEY B                  │
+│ Calon pengusaha F&B        │  │ Pemilik usaha F&B          │
+│                            │  │                            │
+│ "Layak tidak saya buka     │  │ "Produk mana yang jalan,   │
+│  kedai di lokasi ini?"     │  │  mana yang tidak?"         │
+│                            │  │                            │
+│ Market Analysis            │  │ Transaction Management     │
+│ 4 agent · skor kelayakan   │  │ catat harian · analitik    │
+│                            │  │                            │
+│ [ Jalankan ] [ ▶ Otomatis ]│  │ [ Jalankan ] [ ▶ Otomatis ]│
+└────────────────────────────┘  └────────────────────────────┘
 ```
 
-Layar struk memakai satu gambar struk contoh di `public/`. Field dengan confidence rendah disorot dan mendapat fokus lebih awal.
+Tiap kartu punya dua tombol: jalankan manual, atau putar otomatis. Autoplay per journey, bukan satu skrip panjang untuk keduanya.
 
-**Selesai bila.** Seluruh tujuh langkah dapat dilalui berurutan tanpa jalan buntu, dan alur struk sampai tersimpan.
+### `/dashboard` — tiga modul · **baru**
 
-**Ukuran.** Sedang.
+Tetap ada meski sudah ada layar pemilih, karena kedua journey yang ditetapkan memuat langkah "Open Dashboard" dan F-02 mensyaratkan dashboard aktivitas. Modul yang relevan dengan journey terpilih disorot; dua lainnya tetap terlihat dan bisa diklik.
+
+Titik masuk. Tiga kartu besar:
+
+| Modul | Isi kartu | Aksi |
+|---|---|---|
+| Market Analysis | "Uji kelayakan sebelum buka" + skor terakhir kalau ada | Mulai analisis |
+| Transaction Management | "Catat penjualan, lihat produk terlaris" + hari tercatat | Buka transaksi |
+| Edukasi | "Modul singkat sebelum analisis" + progres | Lanjut belajar |
+
+Kartu Edukasi menampilkan status gerbang secara jujur: bila modul wajib belum selesai, kartu Market Analysis menyebut itu sejak dashboard, bukan mengejutkan pengguna di tengah alur.
+
+### Jenis usaha — **dihapus, keputusan final**
+
+Pemilihan kategori usaha (restoran, warung, kafe, gerobak, katering, cloud kitchen) dikeluarkan sepenuhnya. Produk ini memang khusus F&B, sehingga kategori tidak dipakai demo untuk apa pun.
+
+Dua konsekuensi yang dicatat agar tidak terlupa saat menulis laporan akhir:
+
+- **F-03** berbunyi "memilih jenis usaha F&B dan lokasi" — bagian "jenis usaha" tidak terpenuhi di demo, hanya bagian lokasi.
+- **F-08** berbunyi konten edukasi "disesuaikan dengan jenis usaha". Tanpa input jenis usaha, modul edukasi menampilkan empat topik umum F&B yang sama untuk semua pengguna, bukan kurasi per kategori.
+
+Keduanya bukan bug, melainkan penyempitan scope yang disengaja. Sebut apa adanya di laporan; jangan diklaim terpenuhi.
+
+### `/analisis/input` — lokasi, harga, modal · **baru**
+
+Proposal §6.2 dan §7.2 menyebut **satu layar input** bergaya wizard, bukan tiga layar terpisah: "formulir input minimal dengan pilihan jenis usaha F&B, lokasi, rentang harga produk, dan estimasi modal — desain wizard step-by-step agar tidak membebani pengguna".
+
+Rencana mengikuti itu. Satu rute, tiga langkah di dalamnya, dengan progres terlihat:
+
+```text
+┌ Analisis Pasar ────────────── langkah 1 dari 3 ────┐
+│  ●───────○───────○                                 │
+│  Lokasi   Harga   Modal                            │
+│                                                     │
+│  Wilayah   [ Jakarta Selatan ▾ ]                   │
+│  Kecamatan [ Tebet            ▾ ]                  │
+│  Radius    ( 1 km )( 1,5 km )( 3 km )              │
+│                                                     │
+│  ┌ Bukti pada radius ini ──────────────────────┐   │
+│  │ 18 kompetitor · OSM · 3 hari lalu           │   │
+│  │ Traffic pejalan kaki: tidak tersedia        │   │
+│  └─────────────────────────────────────────────┘   │
+│                                    [ Lanjut → ]    │
+└────────────────────────────────────────────────────┘
+```
+
+Langkah 2 harga (rentang harga produk, HPP), langkah 3 modal (modal awal, biaya operasional bulanan, volume harian min–base–maks).
+
+Pratinjau kualitas bukti muncul begitu lokasi dipilih, sebelum pengguna menghabiskan waktu mengisi sisanya.
+
+Di bawah langkah 1 ada tautan kecil jalur unggah dokumen.
+
+Field yang kosong tetap kosong dan memicu blok kesiapan data — mekanisme ini sudah ada di `/review` dan tinggal dipindah.
+
+### `/edukasi` — gerbang · **baru**
+
+Muncul hanya bila modul wajib belum selesai. Empat topik dari proposal §6.4, masing-masing ≤5 menit baca:
+
+| Topik | Isi ringkas |
+|---|---|
+| Perizinan dan Legalitas | NIB, PIRT, sertifikasi halal, izin lokasi |
+| Strategi Penetapan Harga | food cost ratio, cara menghitung HPP, posisi harga terhadap kompetitor |
+| Manajemen Bahan Baku | FIFO, menghindari food waste, negosiasi pemasok, catatan stok |
+| Akuisisi Pelanggan Awal | Google Maps listing, media sosial, word-of-mouth, loyalty sederhana |
+
+Karena jenis usaha dihapus dari alur, keempat topik tampil sama untuk semua pengguna — bukan kurasi per kategori seperti bunyi F-08.
+
+Ini satu-satunya gerbang keras di seluruh produk. Tombol lanjut benar-benar terkunci, bukan sekadar peringatan.
+
+Untuk demo: tiga modul pendek, masing-masing satu layar teks + tiga soal pilihan ganda. Ada tombol "Tandai selesai (demo)" agar presentasi tidak macet.
+
+### `/analisis/konfirmasi` — sebelum run · **alih fungsi dari `/review`**
+
+Layar `/review` yang sudah jadi tetap dipakai, hanya berganti peran: dari "periksa hasil baca AI" menjadi "periksa input sebelum simulasi jalan". Kartu, badge status, edit inline, dan blok kesiapan data semuanya tetap berlaku.
+
+Kalau pengguna datang dari jalur unggah, statusnya berisi hasil ekstraksi. Kalau datang dari form, statusnya berisi apa yang ia isi sendiri.
+
+### `/analisis/proses` — empat agent · **`/simulasi` + tambahan**
+
+Layar ini sudah kuat. Satu hal yang kurang: journey menyebut **empat agent** secara eksplisit, tetapi tampilan sekarang menonjolkan tahap pipeline, bukan keempat agent sebagai aktor.
+
+Tambahan yang diusulkan — strip empat agent di atas panel:
+
+```text
+┌──────────────┬──────────────┬──────────────┬──────────────┐
+│ ⬢ Market     │ ⬢ Customer   │ ⬢ Finance    │ ⬢ Report     │
+│   Analyst    │   Persona    │              │              │
+│ ● aktif      │ ○ menunggu   │ ○ menunggu   │ ○ menunggu   │
+│ 3 aksi       │ —            │ —            │ —            │
+└──────────────┴──────────────┴──────────────┴──────────────┘
+```
+
+Tiap kartu menyala saat council-nya bekerja dan menghitung jumlah aksinya. Ini membuat klaim "empat agent" terlihat dalam dua detik, tanpa membaca feed.
+
+Tiga tampilan Feed / Council / Distribusi tetap seperti sekarang — bagian itu memang inti demo dan tidak diubah.
+
+Durasi skrip disesuaikan ke sekitar 35–45 detik agar cocok dengan rentang 30–60 detik di journey.
+
+### `/laporan` — sudah jadi
+
+Tambahan kecil: aksi "Bandingkan Lokasi Lain" di samping Unduh PDF dan Buat Variasi.
+
+### `/laporan/bandingkan` — **baru**
+
+Dua run berdampingan, satu variabel berbeda. Menampilkan selisih **beserta variabilitas antar-run**, dan menyatakan "tidak dapat disimpulkan" bila selisih lebih kecil dari variabilitas. Ini pemenuhan F-14 sekaligus momen kejujuran yang kuat saat demo.
 
 ---
 
-## Tahap 8 — Putar Otomatis
+## Journey B — detail per layar
 
-**File.**
+Seluruhnya baru. Nilai demonya: memperlihatkan produk tidak berhenti di analisis sekali jalan, tapi menutup lingkaran dengan data nyata.
+
+### `/transaksi` — ringkasan
+
+Kartu metrik hari ini (transaksi, pendapatan), tombol besar **Catat Transaksi**, dan indikator progres data:
 
 ```text
-src/demo/useAutoplay.ts
-src/components/layout/DemoControl.tsx
+Data tercatat: 5 dari 7 hari
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░░  Analitik terbuka setelah 7 hari
 ```
 
-Cara kerja: satu daftar aksi berurutan berisi `{ rute, tahan_ms, aksi? }`. `aksi` opsional untuk hal seperti mengetik nilai di layar Review atau menekan lanjut.
+Indikator ini penting: ia menjelaskan kenapa analitik terkunci, alih-alih menampilkan grafik kosong atau tren palsu dari data dua hari.
 
-```ts
-export const autoplay = [
-  { rute: '/upload',   tahanMs: 2500, aksi: 'unggah-contoh' },
-  { rute: '/analisis', tahanMs: 5000 },
-  { rute: '/review',   tahanMs: 9000, aksi: 'isi-biaya-operasional' },
-  { rute: '/pasar',    tahanMs: 5000 },
-  { rute: '/simulasi', tahanMs: 22000 },
-  { rute: '/laporan',  tahanMs: 18000, aksi: 'gulir-perlahan' },
-  { rute: '/diskusi',  tahanMs: 12000, aksi: 'tanya-promo' },
-];
+### `/transaksi/produk` — daftar produk
+
+Tabel produk: nama, harga jual, HPP, kategori. Bisa tambah, ubah, nonaktifkan. Layar pertama yang dilihat pengguna baru — ada empty state yang mengarahkan membuat produk pertama.
+
+### `/transaksi/catat` — input harian
+
+Layar tercepat di aplikasi. Target di bawah 10 detik per transaksi:
+
+```text
+┌────────────────────────────────────────────────────────┐
+│  Produk   [ Es Kopi Susu ▾ ]  ← chip pencarian         │
+│  Jumlah   [ − ] 2 [ + ]                                │
+│  Harga    Rp 18.000  (dari master, bisa ditimpa)       │
+│  Kanal    ( Dine-in )( Takeaway )( Delivery )          │
+│                                    [ Simpan ⏎ ]        │
+└────────────────────────────────────────────────────────┘
+   Tersimpan hari ini: 14 transaksi · Rp 486.000
 ```
 
-Target durasi total sekitar 75–80 detik. Sediakan tombol jeda dan lanjut; sekali klik di mana pun menghentikan autoplay supaya presenter bisa mengambil alih saat juri bertanya.
+Enter menyimpan dan mengosongkan form tanpa memindahkan fokus.
 
-Hormati `prefers-reduced-motion` dengan menghilangkan animasi pengetikan.
+**Foto struk sebagai opsi input kedua.** Proposal §5.11 menyebut pencatatan harian "bisa input langsung atau lewat foto struk", dan §5.2 mencatat foto struk memang cara pelaku UMKM mencatat hari ini. Jadi ini alat pelacakan, bukan modul tersendiri.
 
-**Selesai bila.** Satu klik menyelesaikan S1 sampai S7 tanpa intervensi, dan dapat dihentikan kapan saja.
+Perlakuannya di demo: tombol kamera kecil di samping form, membuka layar koreksi yang sederhana — foto di kiri, hasil ekstraksi di kanan, field ber-confidence rendah disorot, pengguna membetulkan lalu simpan. Tidak dijadikan bintang utama, tetapi ada, karena tanpanya klaim "lebih mudah dari buku tulis" jadi lemah.
 
-**Ukuran.** Sedang.
+Catatan ketelitian: tabel kebutuhan fungsional di proposal **tidak memuat F-10A**. F-10 hanya menyebut "mencatat transaksi harian (nama produk, jumlah terjual, harga per item)", dan §6.2 menyebut "opsi batch input", bukan foto. F-10A muncul sebagai elaborasi di repo `Docs`, bukan komitmen proposal. Karena itu foto struk diperlakukan sebagai nilai tambah, bukan requirement Must yang wajib lengkap.
+
+Input batch ditunda.
+
+### `/transaksi/analitik` — dashboard
+
+Terkunci sampai 7 hari data. Setelah terbuka:
+
+- pendapatan harian (bar sederhana, bukan grafik berat);
+- produk terlaris dan terendah, **dengan minimum exposure** — produk yang baru ada 2 hari tidak masuk daftar terendah, dan alasannya dinyatakan;
+- tren sederhana dengan observation window disebut eksplisit;
+- kartu rekomendasi rule-based.
+
+Contoh rekomendasi yang boleh muncul:
+
+> **Pastry & Snacks belum menutup biaya**
+> Terjual 9 porsi dalam 7 hari dengan marjin 22%. Pertimbangkan menaikkan harga atau mengurangi porsi produksi harian.
+> *Observation window: 7 hari · sejak 30 Juli 2026*
+
+Yang **tidak boleh** muncul: "hapus produk ini" hanya berdasarkan volume rendah.
 
 ---
 
-## Urutan kerja
+## Berkas data yang perlu ditambah
 
 ```text
-1 Fondasi visual  ──►  2 Shell  ──►  3 Review  ──►  4 Simulasi
-                                                        │
-                          7 Layar ringan  ◄──  5 Laporan
-                                 │                 │
-                                 └──►  6 Diskusi ──┘
-                                            │
-                                            ▼
-                                     8 Putar Otomatis
+src/demo/data/
+  dashboard.ts        ringkasan tiga modul
+  locations.ts        hierarchy Jabodetabek + pratinjau bukti per area
+  education.ts        tiga modul + soal kuis
+  compare.ts          dua run untuk layar bandingkan
+  products.ts         daftar produk Journey B
+  transactions.ts     30 hari transaksi contoh
+  insights.ts         rekomendasi rule-based
 ```
 
-Tahap 1 dan 2 memblokir semuanya. Tahap 3, 4, 5 adalah tiga layar besar dan sebaiknya tidak dikerjakan paralel oleh orang berbeda sebelum primitif di tahap 1 stabil, karena akan menghasilkan tiga gaya kartu yang berbeda.
+Yang sudah ada (`profile.ts`, `simulation.ts`, `report.ts`, `discussion.ts`) tetap dipakai.
 
-Tahap 8 dikerjakan terakhir karena butuh seluruh rute sudah ada.
+---
 
-## Selesai bila
+## Urutan kerja usulan
 
-- [ ] Tujuh langkah dapat dilalui dengan klik, maju dan mundur.
-- [ ] Satu klik Putar Otomatis menyelesaikan alur dalam sekitar 80 detik.
-- [ ] Varian laporan parsial dapat ditampilkan lewat `?hasil=parsial`.
-- [ ] Laporan memuat Evidence Confidence, Bukti & Keterbatasan, dan disclaimer.
-- [ ] Edit inline di layar Review benar-benar mengubah nilai.
-- [ ] Panel simulasi merender enam jenis action dengan bentuk berbeda.
-- [ ] Badge `MODE DEMO` tampil di seluruh layar.
-- [ ] Seluruh alur dapat diselesaikan dengan keyboard.
-- [ ] Berjalan hanya dengan `npm run dev`, tanpa backend.
-- [ ] Tidak ada nilai warna lepas di luar `globals.css`.
+| # | Pekerjaan | Ukuran | Kenapa urutannya begini |
+|---|---|---|---|
+| 1 | `/` disederhanakan + `/demo` pemilih + `/dashboard` | kecil | pintu masuk kedua journey, memblokir sisanya |
+| 2 | Ubah `/pasar` → `/analisis/input` wizard 3 langkah | sedang | komponennya sudah ada, tinggal disusun ulang |
+| 3 | Alih fungsi `/review` → `/analisis/konfirmasi` | kecil | sebagian besar hanya ganti rute dan judul |
+| 4 | `/edukasi` gerbang | sedang | melengkapi Journey A jadi utuh |
+| 5 | Strip empat agent di `/analisis/proses` | kecil | dampak demo besar, kerja sedikit |
+| 6 | **Journey A utuh, bisa didemokan** | — | titik aman pertama |
+| 7 | `/transaksi/produk` + `/transaksi/catat` | sedang | inti Journey B |
+| 8 | `/transaksi/analitik` + kunci 7 hari | sedang | tempat cerita Journey B mendarat |
+| 9 | `/transaksi` ringkasan | kecil | perekat |
+| 10 | **Journey B utuh** | — | titik aman kedua |
+| 11 | `/laporan/bandingkan` | sedang | F-14, nilai tambah |
+| 12 | Autoplay dua journey | kecil | perbarui skrip adegan |
 
-## Catatan
+Langkah 6 dan 10 adalah dua titik di mana demo bisa dihentikan dan tetap utuh. Kalau waktu habis di tengah, berhenti di salah satunya — jangan berhenti di antara.
 
-Alur struk dan layar transaksi berada di tahap 7, artinya keduanya yang paling mungkin terpotong bila waktu habis. Kalau itu terjadi, potong layar transaksi manual lebih dulu dan pertahankan alur struk — alur struk yang memperlihatkan koreksi manusia atas hasil mesin, dan itu cerita yang lebih kuat.
+---
 
-Varian parsial di tahap 5 sebaiknya tidak dipotong meski waktu sempit. Ia bagian kecil dari pekerjaan tetapi satu-satunya yang memperlihatkan produk tetap berguna saat AI gagal.
+## Prioritas kalau waktu sempit
+
+**Pertahankan:**
+
+- panel Council — ini yang membuat "empat agent berdebat" terlihat nyata, dan bagian tersulit ditiru pesaing;
+- varian laporan parsial — satu-satunya yang menunjukkan produk tetap berguna saat AI gagal;
+- kunci 7 hari di Journey B — memperlihatkan sistem menolak menampilkan tren dari data yang belum cukup.
+
+**Boleh dipotong:**
+
+- `/laporan/bandingkan` — nilai tambah (F-14 Should Have), bukan inti journey;
+- `/diskusi` — di luar kedua journey, meski sudah jadi;
+- layar koreksi foto struk — bukan requirement proposal; kalau dipotong, form manual tetap memenuhi F-10;
+- input batch — sudah ditunda.
+
+---
+
+## Sudah diputuskan
+
+| Hal | Keputusan |
+|---|---|
+| Jenis usaha | **Dihapus.** Produk khusus F&B; kategori tidak dipakai demo. F-03 dan F-08 menyempit, dicatat apa adanya. |
+| Layar input | **Satu wizard tiga langkah**, mengikuti proposal §6.2 dan §7.2, bukan tiga rute terpisah. |
+| Foto struk | **Opsi input kedua** di layar pencatatan, bukan modul tersendiri. Bukan requirement proposal. |
+| Titik masuk | Landing satu tombol → `/demo` pemilih journey → dashboard. |
+| Jalur unggah dokumen | **Dipertahankan** sebagai pilihan kedua, tautan kecil di langkah 1 layar input. |
+| Layar Diskusi | **Dipertahankan.** Atribusi tool call jadi bukti angka tidak dikarang LLM. |
+| Visual skor | **Keduanya** — gauge di laporan sesuai proposal §7.4, angka besar di kartu dashboard. |
+| Foto struk | **Dibangun**, versi sederhana: split view, koreksi, simpan. |
+| Label skor | **Diperbaiki** ke rentang proposal §5.9: 68 → "Layak dengan mitigasi". |
+| Durasi simulasi | **Tanpa batas.** Ini mock, bukan produk nyata — skrip boleh sepanjang yang dibutuhkan agar perdebatan council terlihat utuh. Autoplay menunggu simulasi selesai, bukan memakai timer tetap. |
+
+Seluruh keputusan sudah diambil. Tidak ada yang menunggu.

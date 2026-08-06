@@ -13,6 +13,8 @@ import {
   type Langkah,
 } from "@/demo/data/simulation";
 import { AgentCard } from "@/components/simulasi/AgentCard";
+import { AgentStrip } from "@/components/simulasi/AgentStrip";
+import { useAutoplay } from "@/demo/useAutoplay";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Metric";
 import { cn } from "@/lib/format";
@@ -21,7 +23,7 @@ type Tampilan = "feed" | "council" | "distribusi";
 
 export default function Simulasi() {
   const router = useRouter();
-  const { capai, varian, setVarian } = useDemoFlow();
+  const { tandaiSelesai, varian, setVarian } = useDemoFlow();
   const skrip = varian === "parsial" ? langkahParsial : langkah;
 
   const { aktivitas, stageAktif, persen, selesai, elapsed } = usePlayback(skrip);
@@ -31,17 +33,17 @@ export default function Simulasi() {
   const pernahSelesai = useRef(false);
 
   useEffect(() => {
-    capai("simulasi");
-  }, [capai]);
+    tandaiSelesai("proses");
+  }, [tandaiSelesai]);
 
   // Feed default saat berjalan, Council default setelah selesai.
   useEffect(() => {
     if (selesai && !pernahSelesai.current) {
       pernahSelesai.current = true;
       setTampilan("council");
-      capai("laporan");
+      tandaiSelesai("laporan");
     }
-  }, [selesai, capai]);
+  }, [selesai, tandaiSelesai]);
 
   // Auto-scroll berhenti begitu pengguna menggulir ke atas.
   useEffect(() => {
@@ -62,6 +64,7 @@ export default function Simulasi() {
   );
 
   const gagal = varian === "parsial" && selesai;
+  useAutoplay(selesai);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-10">
@@ -201,6 +204,15 @@ export default function Simulasi() {
             </div>
           </div>
 
+          {/* Strip empat agent — proposal §7.3 */}
+          <div className="mb-4">
+            <AgentStrip
+              aktivitas={aktivitas}
+              selesai={selesai}
+              gagal={gagal ? "persona" : null}
+            />
+          </div>
+
           {gagal ? (
             <div className="mb-4">
               <Callout tone="warn">
@@ -269,7 +281,7 @@ export default function Simulasi() {
             <Button
               disabled={!selesai}
               onClick={() => {
-                capai("laporan");
+                tandaiSelesai("laporan");
                 router.push(
                   varian === "parsial" ? "/laporan?hasil=parsial" : "/laporan",
                 );

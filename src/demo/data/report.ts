@@ -6,7 +6,7 @@ export const laporan = {
 
   skor: {
     nilai: 68,
-    interpretasi: "Potensi Sedang — Perlu Penyesuaian",
+    interpretasi: "Layak dengan mitigasi",
     ruleVersion: "lrs-v0.1-unvalidated",
     catatanVersi: "Bobot belum divalidasi ahli",
     dimensi: [

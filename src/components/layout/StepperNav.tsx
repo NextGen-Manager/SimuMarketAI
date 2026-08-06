@@ -2,25 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { steps } from "@/demo/steps";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
+import { stepsFor } from "@/demo/journeys";
 import { cn } from "@/lib/format";
 
 /**
  * Stepper adalah navigasi, bukan dekorasi: tahap yang sudah dilewati
- * dapat diklik, tahap di depan tahap aktif dinonaktifkan.
+ * dapat diklik, tahap di depan dinonaktifkan.
  */
 export function StepperNav() {
   const pathname = usePathname();
-  const { maxStep } = useDemoFlow();
+  const { journey, langkahSelesai } = useDemoFlow();
+
+  if (!journey) return null;
+  const steps = stepsFor(journey);
   const aktifIdx = steps.findIndex((s) => pathname.startsWith(s.href));
+  if (aktifIdx === -1) return null;
 
   return (
-    <nav aria-label="Tahap analisis" className="min-w-0">
-      <ol className="flex items-center gap-1 overflow-x-auto">
+    <nav aria-label="Tahap" className="min-w-0">
+      <ol className="flex items-center gap-0.5 overflow-x-auto">
         {steps.map((s, i) => {
           const aktif = i === aktifIdx;
-          const terbuka = i <= maxStep;
+          const terbuka = i <= aktifIdx || langkahSelesai.has(s.id);
           const konten = (
             <span
               className={cn(
@@ -40,20 +44,16 @@ export function StepperNav() {
                   {i + 1}
                 </span>
               ) : null}
-              {s.short}
+              {s.label}
             </span>
           );
 
           return (
             <li key={s.id} className="flex items-center">
               {terbuka && !aktif ? (
-                <Link href={s.href} aria-current={undefined}>
-                  {konten}
-                </Link>
+                <Link href={s.href}>{konten}</Link>
               ) : (
-                <span aria-current={aktif ? "step" : undefined} aria-disabled={!terbuka}>
-                  {konten}
-                </span>
+                <span aria-current={aktif ? "step" : undefined}>{konten}</span>
               )}
               {i < steps.length - 1 ? (
                 <span aria-hidden className="px-0.5 text-[12px] text-ink-400/50">

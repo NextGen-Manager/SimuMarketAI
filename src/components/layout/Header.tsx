@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { StepperNav } from "./StepperNav";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
-import { useAutoplay } from "@/demo/useAutoplay";
+import { journeys } from "@/demo/journeys";
 
 function Mark() {
   return (
@@ -24,14 +24,14 @@ function Mark() {
 
 export function Header() {
   const pathname = usePathname();
-  const { autoplay, reset } = useDemoFlow();
-  useAutoplay();
+  const { autoplay, journey, reset } = useDemoFlow();
 
   const diLanding = pathname === "/";
+  const diPemilih = pathname === "/demo";
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-surface/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-6 px-6">
+      <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-5 px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
           <Mark />
           <span className="text-[16px] font-bold tracking-tight text-ink-900">
@@ -39,7 +39,16 @@ export function Header() {
           </span>
         </Link>
 
-        {!diLanding ? <StepperNav /> : null}
+        {!diLanding && !diPemilih ? (
+          <>
+            {journey ? (
+              <span className="hidden shrink-0 rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[11.5px] font-semibold text-ink-500 md:inline">
+                Journey {journey} · {journeys[journey].nama}
+              </span>
+            ) : null}
+            <StepperNav />
+          </>
+        ) : null}
 
         <div className="ml-auto flex shrink-0 items-center gap-3">
           <span
@@ -54,12 +63,13 @@ export function Header() {
             </span>
           ) : null}
           {!diLanding ? (
-            <button
+            <Link
+              href="/demo"
               onClick={reset}
               className="hidden rounded-[8px] border border-line px-3 py-1.5 text-[12.5px] font-semibold text-ink-500 hover:bg-surface-2 hover:text-ink-900 sm:block"
             >
               Ulang
-            </button>
+            </Link>
           ) : null}
           <span
             aria-hidden
