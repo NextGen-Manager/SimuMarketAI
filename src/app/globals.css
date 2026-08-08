@@ -106,3 +106,27 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Tepi organik antaradegan landing: mask bertekstur di bibir atas adegan
+   yang sedang naik, sehingga batasnya tidak berupa garis lurus. */
+.scene-edge {
+  -webkit-mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
+  mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
+  -webkit-mask-size: 100% 180px, 100% 100%;
+  mask-size: 100% 180px, 100% 100%;
+  -webkit-mask-position: top left, left 178px;
+  mask-position: top left, left 178px;
+  -webkit-mask-repeat: no-repeat, no-repeat;
+  mask-repeat: no-repeat, no-repeat;
+}
+
+@keyframes scroll-cue {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(5px); opacity: 0.9; }
+}
+.scroll-cue { animation: scroll-cue 1.9s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue { animation: none; }
+  .scene-edge { -webkit-mask-image: none; mask-image: none; }
+}
