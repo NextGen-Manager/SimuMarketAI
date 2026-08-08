@@ -46,20 +46,20 @@ export default function Landing() {
       id: "buka",
       dasar: "#cfe4ee",
       latar: (
-        <>
-          <Image
-            src="/landing.png"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-[58%_center]"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-[radial-gradient(ellipse_46%_58%_at_26%_44%,rgba(255,255,255,0.86),rgba(255,255,255,0.34)_52%,transparent_78%)]"
-          />
-        </>
+        <Image
+          src="/landing.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[58%_center]"
+        />
+      ),
+      hias: (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[radial-gradient(ellipse_46%_58%_at_26%_44%,rgba(255,255,255,0.86),rgba(255,255,255,0.34)_52%,transparent_78%)]"
+        />
       ),
       isi: (
         <Bingkai>
@@ -137,20 +137,20 @@ export default function Landing() {
       id: "simulasi",
       dasar: "var(--color-ink-900)",
       latar: (
-        <>
-          <div
-            aria-hidden
-            className="absolute inset-0 opacity-[0.3]"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
-            }}
-          />
-          <div
-            aria-hidden
-            className="absolute left-1/2 top-1/2 h-[560px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500/12 blur-[130px]"
-          />
-        </>
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.3]"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
+          }}
+        />
+      ),
+      hias: (
+        <div
+          aria-hidden
+          className="absolute left-1/2 top-1/2 h-[560px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500/12 blur-[130px]"
+        />
       ),
       isi: (
         <Bingkai>
@@ -226,17 +226,15 @@ export default function Landing() {
       id: "mulai",
       dasar: "var(--color-ink-900)",
       latar: (
-        <>
-          <Image
-            src="/landing.png"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover object-[42%_center] opacity-25"
-          />
-          <div aria-hidden className="absolute inset-0 bg-ink-900/70" />
-        </>
+        <Image
+          src="/landing.png"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-[42%_center] opacity-25"
+        />
       ),
+      hias: <div aria-hidden className="absolute inset-0 bg-ink-900/70" />,
       isi: (
         <Bingkai>
           <div className="mx-auto max-w-[34rem] text-center">

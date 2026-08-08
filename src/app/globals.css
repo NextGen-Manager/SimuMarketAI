@@ -107,26 +107,60 @@
   }
 }
 
-/* Tepi organik antaradegan landing: mask bertekstur di bibir atas adegan
-   yang sedang naik, sehingga batasnya tidak berupa garis lurus. */
+/* Tepi organik antaradegan landing. Mask bertekstur hanya menempati
+   180px teratas adegan yang naik; posisinya digeser GSAP selama transisi
+   sehingga bentuk batasnya berubah, bukan garis tetap yang ikut terangkat. */
 .scene-edge {
+  --edge-x: 0px;
   -webkit-mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
   mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
-  -webkit-mask-size: 100% 180px, 100% 100%;
-  mask-size: 100% 180px, 100% 100%;
-  -webkit-mask-position: top left, left 178px;
-  mask-position: top left, left 178px;
+  -webkit-mask-size: 160% 180px, 100% 100%;
+  mask-size: 160% 180px, 100% 100%;
+  -webkit-mask-position: var(--edge-x) top, left 178px;
+  mask-position: var(--edge-x) top, left 178px;
   -webkit-mask-repeat: no-repeat, no-repeat;
   mask-repeat: no-repeat, no-repeat;
 }
 
-@keyframes scroll-cue {
-  0%, 100% { transform: translateY(0); opacity: 0.45; }
-  50% { transform: translateY(5px); opacity: 0.9; }
+.titik-adegan {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(16 20 19 / 0.22);
+  transition:
+    height 300ms ease,
+    background-color 300ms ease;
 }
-.scroll-cue { animation: scroll-cue 1.9s ease-in-out infinite; }
+.titik-adegan[data-aktif="1"] {
+  height: 20px;
+  background: rgb(16 20 19 / 0.7);
+}
+
+@keyframes scroll-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 0.9;
+  }
+}
+.scroll-cue {
+  animation: scroll-cue 1.9s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-cue { animation: none; }
-  .scene-edge { -webkit-mask-image: none; mask-image: none; }
+  .scroll-cue {
+    animation: none;
+  }
+  .scene-edge {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .titik-adegan {
+    transition: none;
+  }
 }
