@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { PersonaField } from "@/components/landing/PersonaField";
+import { PersonaFieldAuto } from "@/components/landing/PersonaField";
 import { SceneStack, type Scene } from "@/components/landing/SceneStack";
 
 function Tombol({
@@ -139,7 +139,7 @@ export default function Landing() {
       latar: (
         <div
           aria-hidden
-          className="absolute inset-0 opacity-[0.3]"
+          className="absolute inset-0 opacity-[0.07]"
           style={{
             backgroundImage:
               "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
@@ -149,10 +149,10 @@ export default function Landing() {
       hias: (
         <div
           aria-hidden
-          className="absolute left-1/2 top-1/2 h-[560px] w-[860px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-teal-500/12 blur-[130px]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_44%_38%_at_50%_50%,rgba(26,136,145,0.16),rgba(26,136,145,0.06)_45%,transparent_72%)]"
         />
       ),
-      isi: (
+      isi: (aktif: boolean) => (
         <Bingkai>
           <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
@@ -168,9 +168,7 @@ export default function Landing() {
                 dirata-ratakan sampai hilang.
               </p>
             </div>
-            <div className="rounded-[18px] border border-white/10 bg-white/[0.03] p-5">
-              <PersonaField fase={2} />
-            </div>
+            <PersonaFieldAuto aktif={aktif} />
           </div>
         </Bingkai>
       ),

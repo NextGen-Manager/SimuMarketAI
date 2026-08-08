@@ -107,23 +107,29 @@
   }
 }
 
-/* Tepi organik antaradegan landing. Mask bertekstur hanya menempati
-   180px teratas adegan yang naik; posisinya digeser GSAP selama transisi
-   sehingga bentuk batasnya berubah, bukan garis tetap yang ikut terangkat. */
+/* Batas antaradegan. Pita larutnya dibuat setinggi 52vh dengan gradien
+   berjenjang panjang, supaya membaur berangsur alih-alih terlihat sebagai
+   pita kabut yang jelas ujungnya. --edge-y menggeser seluruh mask ke atas
+   selama transisi; saat adegan diam, lapis pekat menutup penuh. */
 .scene-edge {
   --edge-x: 0px;
+  --edge-y: 0vh;
   -webkit-mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
   mask-image: url("/edge-mask.svg"), linear-gradient(#000, #000);
-  -webkit-mask-size: 160% 180px, 100% 100%;
-  mask-size: 160% 180px, 100% 100%;
-  -webkit-mask-position: var(--edge-x) top, left 178px;
-  mask-position: var(--edge-x) top, left 178px;
+  -webkit-mask-size: 180% 52vh, 100% 240%;
+  mask-size: 180% 52vh, 100% 240%;
+  -webkit-mask-position: var(--edge-x) var(--edge-y),
+    left calc(var(--edge-y) + 51.5vh);
+  mask-position: var(--edge-x) var(--edge-y), left calc(var(--edge-y) + 51.5vh);
   -webkit-mask-repeat: no-repeat, no-repeat;
   mask-repeat: no-repeat, no-repeat;
 }
 
 .titik-adegan {
   display: block;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
   width: 6px;
   height: 6px;
   border-radius: 999px;

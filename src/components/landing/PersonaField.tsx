@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/format";
 
 type Arke = "budget" | "convenience" | "quality" | "social";
@@ -69,7 +70,7 @@ export function PersonaField({
     <div
       className={cn(
         "relative w-full",
-        padat ? "h-[260px] sm:h-[300px]" : "h-[320px] sm:h-[380px]",
+        padat ? "h-[280px] sm:h-[320px]" : "h-[360px] sm:h-[420px]",
       )}
     >
       {kohort.map((p, i) => {
@@ -80,8 +81,11 @@ export function PersonaField({
           const kolom = p.putusan;
           const dalam = perKolom[kolom].indexOf(p);
           const total = perKolom[kolom].length;
-          x = 16 + kolom * 34;
-          y = 26 + (dalam - (total - 1) / 2) * 13;
+          // Jarak antarkartu menyesuaikan isi kolom, supaya kolom terpanjang
+          // tetap muat. Jarak tetap membuat kolom 7 kartu meluber ke atas.
+          const spasi = total > 1 ? Math.min(11, 52 / (total - 1)) : 0;
+          x = 17 + kolom * 33;
+          y = 40 + (dalam - (total - 1) / 2) * spasi;
         }
 
         return (
@@ -134,4 +138,41 @@ export function PersonaField({
       </div>
     </div>
   );
+}
+
+/**
+ * Versi yang bergerak sendiri. Begitu adegannya aktif, kohort berkumpul,
+ * berdebat, lalu terbelah jadi distribusi tanpa perlu disentuh pengguna.
+ * Kembali ke awal saat adegan ditinggalkan, jadi selalu utuh saat dibuka lagi.
+ */
+export function PersonaFieldAuto({
+  aktif,
+  padat,
+}: {
+  aktif: boolean;
+  padat?: boolean;
+}) {
+  const [fase, setFase] = useState<0 | 1 | 2>(0);
+
+  useEffect(() => {
+    if (!aktif) {
+      setFase(0);
+      return;
+    }
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setFase(2);
+      return;
+    }
+    const a = setTimeout(() => setFase(1), 900);
+    const b = setTimeout(() => setFase(2), 2400);
+    return () => {
+      clearTimeout(a);
+      clearTimeout(b);
+    };
+  }, [aktif]);
+
+  return <PersonaField fase={fase} padat={padat} />;
 }
