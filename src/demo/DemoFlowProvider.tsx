@@ -32,6 +32,7 @@ type Ctx = {
 
   produk: Produk[];
   tambahProduk: (p: Produk) => void;
+  hapusProduk: (id: string) => void;
   hariTercatat: number;
   tambahHari: () => void;
   transaksiHariIni: { produkId: string; jumlah: number; harga: number }[];
@@ -93,6 +94,10 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     setProduk((prev) => [...prev, p]);
   }, []);
 
+  const hapusProduk = useCallback((id: string) => {
+    setProduk((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
   const catatTransaksi = useCallback(
     (t: { produkId: string; jumlah: number; harga: number }) => {
       setTransaksiHariIni((prev) => [t, ...prev]);
@@ -131,6 +136,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
       gerbangTerbuka,
       produk,
       tambahProduk,
+      hapusProduk,
       hariTercatat,
       tambahHari,
       transaksiHariIni,
@@ -154,6 +160,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
       gerbangTerbuka,
       produk,
       tambahProduk,
+      hapusProduk,
       hariTercatat,
       tambahHari,
       transaksiHariIni,

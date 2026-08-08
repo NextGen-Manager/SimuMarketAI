@@ -41,7 +41,7 @@ function Bagian({
 
 export default function Laporan() {
   const router = useRouter();
-  const { tandaiSelesai, varian, setVarian } = useDemoFlow();
+  const { tandaiSelesai, varian, setVarian, produk } = useDemoFlow();
   const parsial = varian === "parsial";
   useAutoplay();
 
@@ -230,8 +230,65 @@ export default function Laporan() {
         </div>
       </Bagian>
 
-      {/* 05 Finansial */}
-      <Bagian no="05" judul="Proyeksi Finansial">
+      {/* 05 Penilaian per produk — Journey A menilai menu, bukan hanya lokasi */}
+      <Bagian
+        no="05"
+        judul="Penilaian per Produk"
+        catatan="Persona menilai tiap menu yang kamu masukkan, bukan satu harga rata-rata."
+      >
+        <div className="overflow-x-auto rounded-[10px] border border-line">
+          <table className="w-full text-[13.5px]">
+            <thead>
+              <tr className="bg-surface-2">
+                <th className="label-eyebrow px-4 py-2.5 text-left">Produk</th>
+                <th className="label-eyebrow px-4 py-2.5 text-right">Harga</th>
+                <th className="label-eyebrow px-4 py-2.5 text-right">Marjin</th>
+                <th className="label-eyebrow px-4 py-2.5 text-left">
+                  Respons persona
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {produk.map((p, i) => {
+                const marjin =
+                  p.hpp > 0
+                    ? Math.round(((p.harga - p.hpp) / p.harga) * 100)
+                    : null;
+                const catatan = [
+                  "Diterima luas; jadi alasan utama kunjungan pertama.",
+                  "Diminati segmen pencari rasa, ditolak segmen hemat.",
+                  "Harga dianggap wajar, tetapi kurang menonjol di menu.",
+                  "Sebagian menilai porsinya tidak jelas dari deskripsi.",
+                  "Minat rendah tanpa promo pengenalan.",
+                ];
+                return (
+                  <tr key={p.id} className="border-t border-line-soft bg-surface">
+                    <td className="px-4 py-2.5 font-medium text-ink-900">
+                      {p.nama}
+                    </td>
+                    <td className="tnum px-4 py-2.5 text-right text-ink-700">
+                      {formatIDR(p.harga)}
+                    </td>
+                    <td className="tnum px-4 py-2.5 text-right text-ink-700">
+                      {marjin === null ? "—" : `${marjin}%`}
+                    </td>
+                    <td className="px-4 py-2.5 text-ink-500">
+                      {catatan[i % catatan.length]}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-[12.5px] text-ink-400">
+          Respons di atas adalah data sintetis dari panel persona, bukan hasil
+          survei pelanggan nyata.
+        </p>
+      </Bagian>
+
+      {/* 06 Finansial */}
+      <Bagian no="06" judul="Proyeksi Finansial">
         <div className="grid gap-3 sm:grid-cols-3">
           <MetricTile
             label="Estimasi Pendapatan Bln 1"
@@ -291,7 +348,7 @@ export default function Laporan() {
       </Bagian>
 
       {/* 06 Risiko */}
-      <Bagian no="06" judul="Peta Risiko">
+      <Bagian no="07" judul="Peta Risiko">
         <div className="space-y-3">
           {r.risiko.map((x) => (
             <div key={x.judul} className="border-l-[3px] border-l-danger-600 pl-4">
@@ -313,7 +370,7 @@ export default function Laporan() {
       </Bagian>
 
       {/* 07 Rekomendasi */}
-      <Bagian no="07" judul="Rekomendasi Prioritas (Rencana 30 Hari)">
+      <Bagian no="08" judul="Rekomendasi Prioritas (Rencana 30 Hari)">
         <ul className="space-y-2.5">
           {r.rekomendasi.map((x) => (
             <li
@@ -342,7 +399,7 @@ export default function Laporan() {
       </Bagian>
 
       {/* 08 Bukti — wajib, tidak boleh collapsed */}
-      <Bagian no="08" judul="Bukti & Keterbatasan">
+      <Bagian no="09" judul="Bukti & Keterbatasan">
         <div className="overflow-x-auto rounded-[10px] border border-line">
           <table className="w-full text-[13px]">
             <thead>

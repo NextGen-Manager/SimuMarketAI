@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/Button";
 import { PageHead } from "@/components/layout/PageHead";
 import { cn, formatIDR } from "@/lib/format";
 
-const kanalOpsi = ["Dine-in", "Takeaway", "Delivery"] as const;
-
 export default function CatatTransaksi() {
   const router = useRouter();
   const {
@@ -26,7 +24,6 @@ export default function CatatTransaksi() {
 
   const [produkId, setProdukId] = useState(produk[0]?.id ?? "");
   const [jumlah, setJumlah] = useState(1);
-  const [kanal, setKanal] = useState<(typeof kanalOpsi)[number]>("Dine-in");
   const cariRef = useRef<HTMLSelectElement>(null);
 
   const dipilih = produk.find((p) => p.id === produkId);
@@ -106,27 +103,6 @@ export default function CatatTransaksi() {
                 <p className="tnum py-2.5 text-[17px] font-semibold text-ink-900">
                   {formatIDR(dipilih?.harga ?? 0)}
                 </p>
-              </div>
-            </div>
-
-            <div>
-              <span className="label-eyebrow mb-1.5 block">Kanal</span>
-              <div className="flex flex-wrap gap-2">
-                {kanalOpsi.map((k) => (
-                  <button
-                    key={k}
-                    type="button"
-                    onClick={() => setKanal(k)}
-                    className={cn(
-                      "rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-colors",
-                      kanal === k
-                        ? "border-teal-700 bg-teal-700 text-white"
-                        : "border-line bg-surface text-ink-500 hover:bg-surface-2",
-                    )}
-                  >
-                    {k}
-                  </button>
-                ))}
               </div>
             </div>
 

@@ -142,7 +142,37 @@ function BacaModul({ m, tutup }: { m: Modul; tutup: () => void }) {
       <h1 className="text-[28px] font-bold tracking-tight text-ink-900 text-balance">
         {m.judul}
       </h1>
-      <p className="mt-2 text-[13px] text-ink-400">{m.menit} menit baca</p>
+      <p className="mt-2 text-[13px] text-ink-400">
+        {m.menit} menit · video + bacaan singkat
+      </p>
+
+      {/* Pemutar video. Demo belum menyematkan video sungguhan karena ID
+          YouTube-nya belum ditentukan. */}
+      <div className="mt-6 overflow-hidden rounded-[12px] border border-line bg-ink-900">
+        <div className="relative grid aspect-video place-items-center">
+          <div className="text-center">
+            <span
+              aria-hidden
+              className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-white/95 text-[20px] text-ink-900"
+            >
+              ▶
+            </span>
+            <p className="mt-3 text-[14px] font-semibold text-white/90">
+              {m.judul}
+            </p>
+            <p className="mt-1 text-[12.5px] text-white/55">
+              Video akan disematkan dari YouTube
+            </p>
+          </div>
+          <span className="absolute bottom-3 right-3 rounded-[5px] bg-black/60 px-2 py-0.5 font-mono text-[11px] text-white/80">
+            {m.menit}:00
+          </span>
+        </div>
+      </div>
+      <p className="mt-2 text-[12px] text-ink-400">
+        Materi video belum ditentukan. Saat kurasinya selesai, ganti blok ini
+        dengan penyemat YouTube beserta atribusi sumbernya.
+      </p>
 
       <div className="mt-7 space-y-4">
         {m.isi.map((p, i) => (

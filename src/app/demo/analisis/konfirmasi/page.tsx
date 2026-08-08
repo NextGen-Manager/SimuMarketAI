@@ -14,7 +14,8 @@ import { formatIDR } from "@/lib/format";
 
 export default function Konfirmasi() {
   const router = useRouter();
-  const { tandaiSelesai, profil, ubahProfil, fieldDiubah } = useDemoFlow();
+  const { tandaiSelesai, profil, ubahProfil, fieldDiubah, produk } =
+    useDemoFlow();
   useAutoplay();
 
   useEffect(() => {
@@ -122,20 +123,24 @@ export default function Konfirmasi() {
               <table className="w-full text-[14px]">
                 <thead>
                   <tr className="border-b border-line">
-                    <th className="label-eyebrow pb-2 text-left">Produk Utama</th>
-                    <th className="label-eyebrow pb-2 text-left">Varian</th>
-                    <th className="label-eyebrow pb-2 text-right">Range Harga</th>
+                    <th className="label-eyebrow pb-2 text-left">Produk</th>
+                    <th className="label-eyebrow pb-2 text-right">Harga Jual</th>
+                    <th className="label-eyebrow pb-2 text-right">Marjin</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {profil.produkHarga.items.map((p) => (
-                    <tr key={p.nama} className="border-b border-line-soft last:border-0">
+                  {produk.map((p) => (
+                    <tr key={p.id} className="border-b border-line-soft last:border-0">
                       <td className="py-2.5 pr-3 font-medium text-ink-900">
                         {p.nama}
                       </td>
-                      <td className="py-2.5 pr-3 text-ink-500">{p.varian}</td>
                       <td className="tnum whitespace-nowrap py-2.5 text-right text-ink-900">
-                        {formatIDR(p.hargaMin)} – {formatIDR(p.hargaMaks)}
+                        {formatIDR(p.harga)}
+                      </td>
+                      <td className="tnum py-2.5 text-right text-ink-500">
+                        {p.hpp > 0
+                          ? `${Math.round(((p.harga - p.hpp) / p.harga) * 100)}%`
+                          : "—"}
                       </td>
                     </tr>
                   ))}
