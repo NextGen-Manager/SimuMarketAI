@@ -110,7 +110,7 @@ export default function ProdukPage() {
         <Button
           onClick={() => {
             tandaiSelesai("produk");
-            router.push("/transaksi/catat");
+            router.push("/demo/transaksi/catat");
           }}
         >
           Lanjut Catat Transaksi

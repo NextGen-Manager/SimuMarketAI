@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
-import { DemoFlowProvider } from "@/demo/DemoFlowProvider";
-import { Header } from "@/components/layout/Header";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -17,11 +15,16 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "SimuMarket AI — Demo",
+  title: "SimuMarket AI",
   description:
     "Decision support system untuk calon dan pelaku UMKM F&B di Jabodetabek.",
 };
 
+/**
+ * Root layout sengaja minimal: hanya font dan stylesheet global.
+ * Shell demo (provider, header, stepper) berada di app/demo/layout.tsx
+ * supaya aplikasi sebenarnya bisa dibangun di `/` tanpa terbawa demo.
+ */
 export default function RootLayout({
   children,
 }: {
@@ -29,21 +32,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={`${jakarta.variable} ${sourceSerif.variable}`}>
-      <body className="min-h-screen antialiased">
-        <DemoFlowProvider>
-          <Header />
-          <main>{children}</main>
-          <footer className="mt-20 border-t border-line bg-surface">
-            <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-6 py-8 text-[12.5px] text-ink-400 sm:flex-row sm:items-center sm:justify-between">
-              <p>© 2026 SimuMarket AI — Solusi Cerdas UMKM.</p>
-              <p className="max-w-[46ch]">
-                Seluruh data pada demo ini adalah contoh, bukan hasil analisis
-                nyata.
-              </p>
-            </div>
-          </footer>
-        </DemoFlowProvider>
-      </body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

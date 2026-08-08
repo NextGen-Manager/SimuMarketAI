@@ -78,7 +78,7 @@ export default function Laporan() {
           <Button
             variant="secondary"
             className="px-3 py-2 text-[13px]"
-            onClick={() => router.push("/analisis/input")}
+            onClick={() => router.push("/demo/analisis/input")}
           >
             Buat Variasi
           </Button>
@@ -399,7 +399,7 @@ export default function Laporan() {
         <Button
           onClick={() => {
             tandaiSelesai("diskusi");
-            router.push("/diskusi");
+            router.push("/demo/diskusi");
           }}
         >
           Tanya AI tentang Hasil Ini

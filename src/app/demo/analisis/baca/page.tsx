@@ -27,7 +27,7 @@ export default function Analisis() {
     if (idx >= subTahap.length) {
       const t = setTimeout(() => {
         tandaiSelesai("konfirmasi");
-        router.push("/analisis/konfirmasi");
+        router.push("/demo/analisis/konfirmasi");
       }, 700);
       return () => clearTimeout(t);
     }

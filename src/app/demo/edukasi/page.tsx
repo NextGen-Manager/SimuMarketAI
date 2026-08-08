@@ -109,7 +109,7 @@ export default function Edukasi() {
           disabled={!gerbangTerbuka}
           onClick={() => {
             tandaiSelesai("edukasi");
-            router.push("/analisis/konfirmasi");
+            router.push("/demo/analisis/konfirmasi");
           }}
         >
           {gerbangTerbuka

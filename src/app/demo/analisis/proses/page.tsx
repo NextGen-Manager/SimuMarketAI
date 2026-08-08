@@ -12,8 +12,8 @@ import {
   councilMeta,
   type Langkah,
 } from "@/demo/data/simulation";
-import { AgentCard } from "@/components/simulasi/AgentCard";
-import { AgentStrip } from "@/components/simulasi/AgentStrip";
+import { AgentCard } from "@/demo/components/AgentCard";
+import { AgentStrip } from "@/demo/components/AgentStrip";
 import { useAutoplay } from "@/demo/useAutoplay";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Metric";
@@ -283,7 +283,7 @@ export default function Simulasi() {
               onClick={() => {
                 tandaiSelesai("laporan");
                 router.push(
-                  varian === "parsial" ? "/laporan?hasil=parsial" : "/laporan",
+                  varian === "parsial" ? "/laporan?hasil=parsial" : "/demo/laporan",
                 );
               }}
             >

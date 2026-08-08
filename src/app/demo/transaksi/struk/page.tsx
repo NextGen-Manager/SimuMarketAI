@@ -239,7 +239,7 @@ export default function StrukPage() {
           ) : null}
 
           <div className="mt-5 flex flex-wrap justify-end gap-3">
-            <Button variant="secondary" onClick={() => router.push("/transaksi/catat")}>
+            <Button variant="secondary" onClick={() => router.push("/demo/transaksi/catat")}>
               Batal
             </Button>
             <Button onClick={simpan} disabled={disimpan}>
@@ -250,7 +250,7 @@ export default function StrukPage() {
       </div>
 
       <div className="mt-8 flex justify-end">
-        <Button variant="secondary" onClick={() => router.push("/transaksi/analitik")}>
+        <Button variant="secondary" onClick={() => router.push("/demo/transaksi/analitik")}>
           Lanjut ke Analitik
           <span aria-hidden>→</span>
         </Button>

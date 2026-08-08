@@ -46,7 +46,7 @@ export default function Dashboard() {
       isi: "Empat topik singkat: perizinan, harga, bahan baku, dan pelanggan awal.",
       status: `${modulSelesai.size} dari ${modul.length} topik selesai`,
       statusTone: "text-ink-500",
-      href: "/edukasi",
+      href: "/demo/edukasi",
       cta: "Lanjut belajar",
       sorot: false,
     },

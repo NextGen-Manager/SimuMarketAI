@@ -270,7 +270,7 @@ export default function Konfirmasi() {
         <Button
           onClick={() => {
             tandaiSelesai("konfirmasi");
-            router.push("/analisis/proses");
+            router.push("/demo/analisis/proses");
           }}
         >
           Lanjut ke Simulasi Pasar

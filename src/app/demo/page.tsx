@@ -14,7 +14,7 @@ export default function PilihJourney() {
     reset();
     pilihJourney(j);
     setAutoplay(otomatis);
-    router.push("/dashboard");
+    router.push("/demo/dashboard");
   }
 
   return (

@@ -9,13 +9,13 @@ export const journeys = {
     modul: "Market Analysis",
     ringkas: "4 agent berdeliberasi · Launch Readiness Score",
     langkah: [
-      { label: "Isi lokasi, harga, modal", href: "/analisis/input" },
-      { label: "Selesaikan modul edukasi", href: "/edukasi" },
-      { label: "Konfirmasi input", href: "/analisis/konfirmasi" },
-      { label: "Empat agent berjalan", href: "/analisis/proses" },
-      { label: "Baca laporan", href: "/laporan" },
+      { label: "Isi lokasi, harga, modal", href: "/demo/analisis/input" },
+      { label: "Selesaikan modul edukasi", href: "/demo/edukasi" },
+      { label: "Konfirmasi input", href: "/demo/analisis/konfirmasi" },
+      { label: "Empat agent berjalan", href: "/demo/analisis/proses" },
+      { label: "Baca laporan", href: "/demo/laporan" },
     ],
-    mulai: "/analisis/input",
+    mulai: "/demo/analisis/input",
   },
   B: {
     id: "B" as const,
@@ -24,30 +24,30 @@ export const journeys = {
     modul: "Transaction Management",
     ringkas: "Catat harian · analitik setelah 7 hari",
     langkah: [
-      { label: "Daftarkan produk", href: "/transaksi/produk" },
-      { label: "Catat transaksi harian", href: "/transaksi/catat" },
-      { label: "Atau unggah foto struk", href: "/transaksi/struk" },
-      { label: "Buka analitik", href: "/transaksi/analitik" },
+      { label: "Daftarkan produk", href: "/demo/transaksi/produk" },
+      { label: "Catat transaksi harian", href: "/demo/transaksi/catat" },
+      { label: "Atau unggah foto struk", href: "/demo/transaksi/struk" },
+      { label: "Buka analitik", href: "/demo/transaksi/analitik" },
     ],
-    mulai: "/transaksi/produk",
+    mulai: "/demo/transaksi/produk",
   },
 } as const;
 
 /** Rute Journey A, dipakai stepper dan autoplay. */
 export const stepsA = [
-  { id: "input", label: "Input", href: "/analisis/input" },
-  { id: "edukasi", label: "Edukasi", href: "/edukasi" },
-  { id: "konfirmasi", label: "Konfirmasi", href: "/analisis/konfirmasi" },
-  { id: "proses", label: "Simulasi", href: "/analisis/proses" },
-  { id: "laporan", label: "Laporan", href: "/laporan" },
-  { id: "diskusi", label: "Diskusi", href: "/diskusi" },
+  { id: "input", label: "Input", href: "/demo/analisis/input" },
+  { id: "edukasi", label: "Edukasi", href: "/demo/edukasi" },
+  { id: "konfirmasi", label: "Konfirmasi", href: "/demo/analisis/konfirmasi" },
+  { id: "proses", label: "Simulasi", href: "/demo/analisis/proses" },
+  { id: "laporan", label: "Laporan", href: "/demo/laporan" },
+  { id: "diskusi", label: "Diskusi", href: "/demo/diskusi" },
 ] as const;
 
 /** Rute Journey B. */
 export const stepsB = [
-  { id: "produk", label: "Produk", href: "/transaksi/produk" },
-  { id: "catat", label: "Catat", href: "/transaksi/catat" },
-  { id: "analitik", label: "Analitik", href: "/transaksi/analitik" },
+  { id: "produk", label: "Produk", href: "/demo/transaksi/produk" },
+  { id: "catat", label: "Catat", href: "/demo/transaksi/catat" },
+  { id: "analitik", label: "Analitik", href: "/demo/transaksi/analitik" },
 ] as const;
 
 export type StepId = (typeof stepsA)[number]["id"] | (typeof stepsB)[number]["id"];

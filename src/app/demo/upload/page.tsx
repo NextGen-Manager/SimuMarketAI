@@ -43,7 +43,7 @@ export default function Upload() {
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button onClick={() => setTerunggah(true)}>Pakai dokumen contoh</Button>
-            <Button variant="secondary" onClick={() => router.push("/analisis/konfirmasi")}>
+            <Button variant="secondary" onClick={() => router.push("/demo/analisis/konfirmasi")}>
               Isi manual saja
             </Button>
           </div>
@@ -77,7 +77,7 @@ export default function Upload() {
             <Button
               onClick={() => {
                 tandaiSelesai("baca");
-                router.push("/analisis/baca");
+                router.push("/demo/analisis/baca");
               }}
             >
               Baca Dokumen

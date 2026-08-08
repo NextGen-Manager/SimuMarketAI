@@ -12,21 +12,21 @@ type Adegan = { rute: string; tahanMs: number; tungguSelesai?: boolean };
  * `tungguSelesai` — autoplay menunggu sinyal selesai, bukan timer tetap.
  */
 export const adeganA: Adegan[] = [
-  { rute: "/dashboard", tahanMs: 3000 },
-  { rute: "/analisis/input", tahanMs: 11000 },
-  { rute: "/edukasi", tahanMs: 9000 },
-  { rute: "/analisis/konfirmasi", tahanMs: 11000 },
-  { rute: "/analisis/proses", tahanMs: 0, tungguSelesai: true },
-  { rute: "/laporan", tahanMs: 18000 },
-  { rute: "/diskusi", tahanMs: 12000 },
+  { rute: "/demo/dashboard", tahanMs: 3000 },
+  { rute: "/demo/analisis/input", tahanMs: 11000 },
+  { rute: "/demo/edukasi", tahanMs: 9000 },
+  { rute: "/demo/analisis/konfirmasi", tahanMs: 11000 },
+  { rute: "/demo/analisis/proses", tahanMs: 0, tungguSelesai: true },
+  { rute: "/demo/laporan", tahanMs: 18000 },
+  { rute: "/demo/diskusi", tahanMs: 12000 },
 ];
 
 export const adeganB: Adegan[] = [
-  { rute: "/dashboard", tahanMs: 3000 },
-  { rute: "/transaksi/produk", tahanMs: 8000 },
-  { rute: "/transaksi/catat", tahanMs: 9000 },
-  { rute: "/transaksi/struk", tahanMs: 11000 },
-  { rute: "/transaksi/analitik", tahanMs: 16000 },
+  { rute: "/demo/dashboard", tahanMs: 3000 },
+  { rute: "/demo/transaksi/produk", tahanMs: 8000 },
+  { rute: "/demo/transaksi/catat", tahanMs: 9000 },
+  { rute: "/demo/transaksi/struk", tahanMs: 11000 },
+  { rute: "/demo/transaksi/analitik", tahanMs: 16000 },
 ];
 
 export function adeganFor(j: JourneyId) {

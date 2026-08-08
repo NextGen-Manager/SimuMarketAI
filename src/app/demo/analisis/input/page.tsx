@@ -43,7 +43,7 @@ export default function InputAnalisis() {
     }
     tandaiSelesai("input");
     ubahProfil("targetPelanggan.lokasi", `${kecamatan}, ${kota} (radius ${radius / 1000} km)`);
-    router.push(gerbangTerbuka ? "/analisis/konfirmasi" : "/edukasi");
+    router.push(gerbangTerbuka ? "/demo/analisis/konfirmasi" : "/demo/edukasi");
   }
 
   return (
@@ -178,7 +178,7 @@ export default function InputAnalisis() {
             <p className="text-[13px] text-ink-400">
               Punya proposal atau rencana usaha?{" "}
               <Link
-                href="/upload"
+                href="/demo/upload"
                 className="font-semibold text-teal-700 underline underline-offset-2"
               >
                 Unggah untuk mengisi otomatis
@@ -297,7 +297,7 @@ export default function InputAnalisis() {
       <div className="mt-6 flex justify-between gap-3">
         <Button
           variant="ghost"
-          onClick={() => (langkah > 0 ? setLangkah((l) => l - 1) : router.push("/dashboard"))}
+          onClick={() => (langkah > 0 ? setLangkah((l) => l - 1) : router.push("/demo/dashboard"))}
         >
           ← Kembali
         </Button>

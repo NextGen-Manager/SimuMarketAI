@@ -14,22 +14,22 @@ export default function TransaksiRingkasan() {
 
   const pintasan = [
     {
-      href: "/transaksi/catat",
+      href: "/demo/transaksi/catat",
       judul: "Catat Transaksi",
       isi: "Pilih produk, masukkan jumlah, simpan.",
     },
     {
-      href: "/transaksi/struk",
+      href: "/demo/transaksi/struk",
       judul: "Foto Struk",
       isi: "Baca struk kertas, koreksi hasilnya, lalu simpan.",
     },
     {
-      href: "/transaksi/produk",
+      href: "/demo/transaksi/produk",
       judul: "Daftar Produk",
       isi: `${produk.length} produk terdaftar.`,
     },
     {
-      href: "/transaksi/analitik",
+      href: "/demo/transaksi/analitik",
       judul: "Analitik",
       isi: terbuka
         ? "Peringkat produk, tren, dan insight."

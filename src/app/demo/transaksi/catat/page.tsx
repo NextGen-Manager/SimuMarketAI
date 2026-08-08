@@ -144,7 +144,7 @@ export default function CatatTransaksi() {
           <p className="mt-4 text-[12.5px] text-ink-400">
             Punya struk kertas?{" "}
             <Link
-              href="/transaksi/struk"
+              href="/demo/transaksi/struk"
               className="font-semibold text-teal-700 underline underline-offset-2"
             >
               Foto struknya
@@ -223,7 +223,7 @@ export default function CatatTransaksi() {
         <Button
           onClick={() => {
             tandaiSelesai("catat");
-            router.push("/transaksi/analitik");
+            router.push("/demo/transaksi/analitik");
           }}
         >
           Buka Analitik
