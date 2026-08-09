@@ -13,7 +13,7 @@ export const journeys = {
       { label: "Selesaikan modul edukasi", href: "/demo/edukasi" },
       { label: "Konfirmasi input", href: "/demo/analisis/konfirmasi" },
       { label: "Empat agent berjalan", href: "/demo/analisis/proses" },
-      { label: "Baca laporan", href: "/demo/laporan" },
+      { label: "Baca laporan", href: "/demo/laporan/RPT-2026-0087" },
     ],
     mulai: "/demo/analisis/input",
   },
@@ -25,9 +25,9 @@ export const journeys = {
     ringkas: "Catat harian · analitik setelah 7 hari",
     langkah: [
       { label: "Daftarkan produk", href: "/demo/transaksi/produk" },
-      { label: "Catat transaksi harian", href: "/demo/transaksi/catat" },
-      { label: "Atau unggah foto struk", href: "/demo/transaksi/struk" },
-      { label: "Buka analitik", href: "/demo/transaksi/analitik" },
+      { label: "Catat manual atau unggah struk", href: "/demo/transaksi/catat" },
+      { label: "Kumpulkan data minimal 7 hari", href: "/demo/transaksi" },
+      { label: "Baca insight dan ekspor laporan", href: "/demo/transaksi/analitik" },
     ],
     mulai: "/demo/transaksi/produk",
   },
@@ -39,14 +39,19 @@ export const stepsA = [
   { id: "edukasi", label: "Edukasi", href: "/demo/edukasi" },
   { id: "konfirmasi", label: "Konfirmasi", href: "/demo/analisis/konfirmasi" },
   { id: "proses", label: "Simulasi", href: "/demo/analisis/proses" },
-  { id: "laporan", label: "Laporan", href: "/demo/laporan" },
+  { id: "laporan", label: "Laporan", href: "/demo/laporan/RPT-2026-0087" },
   { id: "diskusi", label: "Diskusi", href: "/demo/diskusi" },
 ] as const;
 
 /** Rute Journey B. */
 export const stepsB = [
   { id: "produk", label: "Produk", href: "/demo/transaksi/produk" },
-  { id: "catat", label: "Catat", href: "/demo/transaksi/catat" },
+  {
+    id: "input",
+    label: "Transaksi",
+    href: "/demo/transaksi/catat",
+    paths: ["/demo/transaksi/catat", "/demo/transaksi/struk"],
+  },
   { id: "analitik", label: "Analitik", href: "/demo/transaksi/analitik" },
 ] as const;
 

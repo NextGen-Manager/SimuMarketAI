@@ -283,7 +283,9 @@ export default function Simulasi() {
               onClick={() => {
                 tandaiSelesai("laporan");
                 router.push(
-                  varian === "parsial" ? "/laporan?hasil=parsial" : "/demo/laporan",
+                  varian === "parsial"
+                    ? "/demo/laporan/RPT-2026-0087?hasil=parsial"
+                    : "/demo/laporan/RPT-2026-0087",
                 );
               }}
             >

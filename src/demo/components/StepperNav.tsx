@@ -16,7 +16,10 @@ export function StepperNav() {
 
   if (!journey) return null;
   const steps = stepsFor(journey);
-  const aktifIdx = steps.findIndex((s) => pathname.startsWith(s.href));
+  const aktifIdx = steps.findIndex((step) => {
+    const paths = "paths" in step ? step.paths : [step.href];
+    return paths.some((path) => pathname === path);
+  });
   if (aktifIdx === -1) return null;
 
   return (

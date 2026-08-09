@@ -1,260 +1,202 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useDemoFlow } from "@/demo/DemoFlowProvider";
-import { useAutoplay } from "@/demo/useAutoplay";
-import { strukDraft } from "@/demo/data/transactions";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Metric";
 import { PageHead } from "@/components/layout/PageHead";
+import { useDemoFlow } from "@/demo/DemoFlowProvider";
+import { businessReceiptSeeds, workspaceSource } from "@/demo/data/workspace";
 import { cn, formatIDR } from "@/lib/format";
 
-const AMBANG_CONFIDENCE = 0.85;
+const LOW_CONFIDENCE_PERCENT = 85;
 
-function ConfidenceTag({ nilai }: { nilai: number }) {
-  const rendah = nilai < AMBANG_CONFIDENCE;
+type ReceiptItem = {
+  raw: string;
+  productId: string;
+  quantity: number;
+  unitPriceIdr: number;
+  confidencePercent: number;
+};
+
+function ConfidenceTag({ value }: { value: number }) {
+  const low = value < LOW_CONFIDENCE_PERCENT;
   return (
     <span
       className={cn(
-        "tnum inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold",
-        rendah
-          ? "border-warn-600/35 bg-warn-50 text-warn-600"
+        "tnum inline-flex rounded-full border px-2 py-0.5 text-[10.5px] font-bold",
+        low
+          ? "border-amber-600/35 bg-amber-50 text-amber-600"
           : "border-success-600/30 bg-success-50 text-success-600",
       )}
     >
-      {rendah ? "ⓘ" : "✓"} {nilai.toFixed(2).replace(".", ",")}
+      {low ? "ⓘ" : "✓"} {value}%
     </span>
   );
 }
 
-export default function StrukPage() {
+export default function ReceiptPage() {
   const router = useRouter();
-  const { produk, catatTransaksi, tandaiSelesai } = useDemoFlow();
-  useAutoplay();
+  const {
+    activeBusinessId,
+    setActiveBusinessId,
+    businessCatalogs,
+    demoRole,
+    catatTransaksi,
+    tandaiSelesai,
+  } = useDemoFlow();
+  const business =
+    businessCatalogs.find((item) => item.id === activeBusinessId) ??
+    businessCatalogs[0];
+  const receipt =
+    activeBusinessId === "dapur-rasa"
+      ? businessReceiptSeeds["dapur-rasa"]
+      : businessReceiptSeeds["kopi-senja"];
+  const [items, setItems] = useState<ReceiptItem[]>(() =>
+    receipt.items.map((item) => ({ ...item })),
+  );
+  const [saved, setSaved] = useState(false);
+  const [edited, setEdited] = useState(false);
 
-  const [items, setItems] = useState(strukDraft.items);
-  const [disimpan, setDisimpan] = useState(false);
+  useEffect(() => {
+    setItems(receipt.items.map((item) => ({ ...item })));
+    setSaved(false);
+    setEdited(false);
+  }, [receipt]);
 
-  const totalItem = items.reduce((a, i) => a + i.jumlah * i.harga, 0);
-  const selisih = totalItem !== strukDraft.total.nilai;
-
-  function ubahJumlah(i: number, j: number) {
-    setItems((prev) =>
-      prev.map((it, k) => (k === i ? { ...it, jumlah: Math.max(1, j) } : it)),
+  function updateQuantity(index: number, quantity: number) {
+    setItems((current) =>
+      current.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, quantity: Math.max(1, quantity) } : item,
+      ),
     );
+    setEdited(true);
   }
 
-  function simpan() {
-    items.forEach((it) =>
-      catatTransaksi({ produkId: it.cocok, jumlah: it.jumlah, harga: it.harga }),
-    );
-    setDisimpan(true);
-    tandaiSelesai("struk");
+  function saveReceipt() {
+    items.forEach((item) => {
+      catatTransaksi({
+        businessId: business.id,
+        produkId: item.productId,
+        jumlah: item.quantity,
+        harga: item.unitPriceIdr,
+      });
+    });
+    tandaiSelesai("input");
+    setSaved(true);
   }
 
   return (
-    <div className="mx-auto max-w-[1080px] px-6 py-12">
+    <main className="mx-auto max-w-[1080px] px-6 py-10">
       <PageHead
-        judul="Periksa Hasil Pembacaan Struk"
-        sub="Hasil pembacaan mesin selalu berupa draft. Periksa dan betulkan sebelum disimpan sebagai transaksi."
+        judul="Transaction Management"
+        sub="Unggah struk adalah metode input alternatif. Hasil OCR selalu menjadi draft dan wajib diperiksa sebelum disimpan."
       />
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_1.3fr]">
-        {/* Foto struk */}
-        <div className="rounded-[12px] border border-line bg-surface p-4">
-          <div className="label-eyebrow mb-3">Foto struk</div>
-          <div className="rounded-[8px] border border-line bg-surface-2 p-5 font-mono text-[11px] leading-[1.8] text-ink-500">
-            <p className="text-center font-bold text-ink-700">KEDAI KOPI SENJA</p>
-            <p className="text-center">Tebet, Jakarta Selatan</p>
-            <p className="mt-2 border-t border-dashed border-line pt-2">
-              05/08/2026 12:10
-            </p>
-            <p className="mt-2 border-t border-dashed border-line pt-2">
-              ES KOPI SUSU GLA AREN
-              <br />
-              &nbsp;&nbsp;2 x 20.000 ......... 40.000
-            </p>
-            <p>
-              AMERICANO
-              <br />
-              &nbsp;&nbsp;1 x 18.000 ......... 18.000
-            </p>
-            <p>
-              CROISSANT BTR
-              <br />
-              &nbsp;&nbsp;1 x 22.000 ......... 22.000
-            </p>
-            <p className="mt-2 border-t border-dashed border-line pt-2 font-bold text-ink-700">
-              TOTAL ................ 80.000
+      {demoRole === "owner" ? <div role="tablist" aria-label="Pilih usaha untuk struk" className="mb-4 flex flex-wrap gap-2">
+        {businessCatalogs.map((catalog) => (
+          <button
+            key={catalog.id}
+            type="button"
+            role="tab"
+            aria-selected={business.id === catalog.id}
+            onClick={() => setActiveBusinessId(catalog.id)}
+            className={cn(
+              "rounded-[9px] border px-4 py-2.5 text-left",
+              business.id === catalog.id
+                ? "border-teal-700 bg-teal-50"
+                : "border-line bg-surface hover:bg-surface-2",
+            )}
+          >
+            <span className="block text-[12.5px] font-bold text-ink-900">{catalog.name}</span>
+            <span className="mt-0.5 block text-[10.5px] text-ink-400">{catalog.area}</span>
+          </button>
+        ))}
+      </div> : <div className="mb-4 rounded-[10px] border border-line bg-surface-2 px-4 py-3"><p className="text-[10px] font-bold uppercase tracking-[0.1em] text-ink-400">Toko penugasan</p><p className="mt-1 text-[13px] font-bold text-ink-900">{business.name} · {business.area}</p></div>}
+
+      <div role="tablist" aria-label="Metode input transaksi" className="mb-5 flex gap-2">
+        <Link role="tab" aria-selected="false" href="/demo/transaksi/catat" className="rounded-[9px] border border-line bg-surface px-3.5 py-2 text-[12px] font-bold text-ink-500 hover:bg-surface-2">
+          Input manual
+        </Link>
+        <span role="tab" aria-selected="true" className="rounded-[9px] border border-teal-700 bg-teal-50 px-3.5 py-2 text-[12px] font-bold text-teal-700">
+          Unggah struk
+        </span>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+        <section className="rounded-[14px] border border-line bg-surface p-5">
+          <p className="label-eyebrow">Pratinjau struk</p>
+          <div className="mt-4 rounded-[9px] border border-dashed border-line bg-surface-2 p-5 font-mono text-[11px] leading-7 text-ink-500">
+            <p className="text-center font-bold text-ink-900">{receipt.merchant.toUpperCase()}</p>
+            <p className="text-center">{business.area}</p>
+            <p className="mt-3 border-t border-dashed border-line pt-2">{receipt.date}</p>
+            {receipt.items.map((item) => (
+              <p key={item.raw} className="mt-2">{item.raw}<br />{item.quantity} × {formatIDR(item.unitPriceIdr)}</p>
+            ))}
+            <p className="mt-3 border-t border-dashed border-line pt-2 font-bold text-ink-900">
+              TOTAL {formatIDR(receipt.totalIdr)}
             </p>
           </div>
-          <p className="mt-3 text-[12px] leading-relaxed text-ink-400">
-            Gambar disimpan sebagai objek privat. Metadata lokasi dihapus dan
-            gambar tidak pernah dikirim utuh ke penyedia AI.
+          <p className="mt-3 text-[11px] leading-5 text-ink-400">
+            Gambar adalah fixture demo. Pada produk nyata, file disimpan privat dan tidak menjadi transaksi sebelum dikonfirmasi.
           </p>
-        </div>
+        </section>
 
-        {/* Hasil ekstraksi */}
-        <div className="rounded-[12px] border border-line bg-surface p-5">
-          <div className="mb-4 flex items-baseline justify-between">
-            <div className="label-eyebrow">Hasil ekstraksi</div>
-            <span className="text-[12px] text-ink-400">
-              field keyakinan rendah disorot
-            </span>
+        <section className="rounded-[14px] border border-line bg-surface p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="label-eyebrow">Draft hasil OCR</p>
+              <h2 className="mt-1 text-[16px] font-bold text-ink-900">Periksa kecocokan produk</h2>
+            </div>
+            <span className="rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[10px] font-bold text-ink-500">Belum tersimpan</span>
           </div>
-
-          <dl className="space-y-2.5 border-b border-line pb-4">
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-[13.5px] text-ink-500">Merchant</dt>
-              <dd className="flex items-center gap-2 text-[14px] text-ink-900">
-                {strukDraft.merchant.nilai}
-                <ConfidenceTag nilai={strukDraft.merchant.confidence} />
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-[13.5px] text-ink-500">Tanggal</dt>
-              <dd className="flex items-center gap-2 text-[14px] text-ink-900">
-                {strukDraft.tanggal.nilai}
-                <ConfidenceTag nilai={strukDraft.tanggal.confidence} />
-              </dd>
-            </div>
-          </dl>
 
           <div className="mt-4 space-y-3">
-            {items.map((it, i) => {
-              const p = produk.find((x) => x.id === it.cocok);
-              const rendah = it.confidence < AMBANG_CONFIDENCE;
-              return (
-                <div
-                  key={it.raw}
-                  className={cn(
-                    "rounded-[10px] border p-3",
-                    rendah
-                      ? "border-warn-600/35 bg-warn-50/40"
-                      : "border-line bg-surface",
-                  )}
-                >
-                  <div className="mb-2 flex items-start justify-between gap-3">
-                    <span className="font-mono text-[11.5px] text-ink-400">
-                      {it.raw}
-                    </span>
-                    <ConfidenceTag nilai={it.confidence} />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <select
-                      value={it.cocok}
-                      onChange={(e) =>
-                        setItems((prev) =>
-                          prev.map((x, k) =>
-                            k === i ? { ...x, cocok: e.target.value } : x,
-                          ),
-                        )
-                      }
-                      aria-label={`Cocokkan ${it.raw} ke produk`}
-                      className="min-w-0 flex-1 rounded-[7px] border border-line bg-surface px-2.5 py-1.5 text-[13.5px] text-ink-900"
-                    >
-                      {produk.map((p2) => (
-                        <option key={p2.id} value={p2.id}>
-                          {p2.nama}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => ubahJumlah(i, it.jumlah - 1)}
-                        aria-label="Kurangi"
-                        className="grid h-8 w-8 place-items-center rounded-[6px] border border-line text-ink-500 hover:bg-surface-2"
-                      >
-                        −
-                      </button>
-                      <span className="tnum w-6 text-center text-[14px] font-bold text-ink-900">
-                        {it.jumlah}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => ubahJumlah(i, it.jumlah + 1)}
-                        aria-label="Tambah"
-                        className="grid h-8 w-8 place-items-center rounded-[6px] border border-line text-ink-500 hover:bg-surface-2"
-                      >
-                        +
-                      </button>
-                    </div>
-                    <span className="tnum text-[13.5px] text-ink-500">
-                      × {formatIDR(it.harga)}
-                    </span>
-                    {p ? null : (
-                      <span className="text-[12px] font-semibold text-danger-600">
-                        belum cocok
-                      </span>
-                    )}
-                  </div>
+            {items.map((item, index) => (
+              <article key={`${item.raw}-${index}`} className={cn("rounded-[10px] border p-3", item.confidencePercent < LOW_CONFIDENCE_PERCENT ? "border-amber-600/30 bg-amber-50/40" : "border-line")}>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-mono text-[10.5px] text-ink-400">{item.raw}</p>
+                  <ConfidenceTag value={item.confidencePercent} />
                 </div>
-              );
-            })}
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <select
+                    value={item.productId}
+                    onChange={(event) => {
+                      const product = business.products.find((candidate) => candidate.id === event.target.value);
+                      setItems((current) => current.map((candidate, itemIndex) => itemIndex === index ? { ...candidate, productId: event.target.value, unitPriceIdr: product?.sellingPriceIdr ?? candidate.unitPriceIdr } : candidate));
+                      setEdited(true);
+                    }}
+                    aria-label={`Cocokkan ${item.raw} ke produk`}
+                    className="min-w-0 flex-1 rounded-[7px] border border-line bg-surface px-2.5 py-2 text-[12.5px] text-ink-900"
+                  >
+                    {business.products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                  </select>
+                  <button type="button" onClick={() => updateQuantity(index, item.quantity - 1)} aria-label="Kurangi jumlah" className="grid h-9 w-9 place-items-center rounded-[7px] border border-line text-ink-500">−</button>
+                  <span className="tnum w-5 text-center text-[13px] font-bold text-ink-900">{item.quantity}</span>
+                  <button type="button" onClick={() => updateQuantity(index, item.quantity + 1)} aria-label="Tambah jumlah" className="grid h-9 w-9 place-items-center rounded-[7px] border border-line text-ink-500">+</button>
+                  <span className="tnum text-[12px] text-ink-500">{formatIDR(item.unitPriceIdr)} / item</span>
+                </div>
+              </article>
+            ))}
           </div>
 
-          <div className="mt-4 border-t border-line pt-4">
-            <div className="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
-              <span className="text-ink-500">
-                Total tertulis di struk:{" "}
-                <span className="tnum font-semibold text-ink-900">
-                  {formatIDR(strukDraft.total.nilai)}
-                </span>
-              </span>
-              <span className="text-ink-500">
-                Total dari item:{" "}
-                <span
-                  className={cn(
-                    "tnum font-semibold",
-                    selisih ? "text-danger-600" : "text-success-600",
-                  )}
-                >
-                  {formatIDR(totalItem)}
-                </span>
-              </span>
-            </div>
-
-            {selisih ? (
-              <div className="mt-3">
-                <Callout tone="danger">
-                  Jumlah item tidak cocok dengan total pada struk. Perbaiki dulu,
-                  atau konfirmasi secara eksplisit bahwa selisih ini disengaja.
-                </Callout>
-              </div>
-            ) : null}
-          </div>
-
-          {disimpan ? (
-            <div className="mt-4">
-              <Callout tone="info">
-                <strong className="font-semibold text-ink-900">
-                  Tersimpan sebagai transaksi.
-                </strong>{" "}
-                Draft hasil pembacaan tidak pernah menjadi transaksi tanpa
-                konfirmasi kamu.
-              </Callout>
-            </div>
+          {edited ? (
+            <div className="mt-4"><Callout tone="warn">Draft berubah. Total akhir akan direkonsiliasi deterministic engine saat transaksi disimpan.</Callout></div>
+          ) : null}
+          {saved ? (
+            <div className="mt-4"><Callout tone="info"><strong className="font-semibold text-ink-900">Transaksi tersimpan.</strong> Draft OCR telah dikonfirmasi untuk {business.name}.</Callout></div>
           ) : null}
 
           <div className="mt-5 flex flex-wrap justify-end gap-3">
-            <Button variant="secondary" onClick={() => router.push("/demo/transaksi/catat")}>
-              Batal
-            </Button>
-            <Button onClick={simpan} disabled={disimpan}>
-              {disimpan ? "Sudah disimpan" : "Simpan sebagai Transaksi"}
-            </Button>
+            <Button variant="secondary" onClick={() => router.push("/demo/transaksi/catat")}>Kembali ke input manual</Button>
+            <Button onClick={saveReceipt} disabled={saved}>{saved ? "Sudah disimpan" : "Simpan transaksi"}</Button>
           </div>
-        </div>
+          <p className="mt-4 border-t border-line pt-3 text-[10px] text-ink-400">
+            {workspaceSource.label} · {workspaceSource.observedAt} · {workspaceSource.confidence}
+          </p>
+        </section>
       </div>
-
-      <div className="mt-8 flex justify-end">
-        <Button variant="secondary" onClick={() => router.push("/demo/transaksi/analitik")}>
-          Lanjut ke Analitik
-          <span aria-hidden>→</span>
-        </Button>
-      </div>
-    </div>
+    </main>
   );
 }
