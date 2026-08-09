@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { dashboardSeed, type DashboardNavItem } from "@/demo/data/dashboard";
-import { useDemoFlow } from "@/demo/DemoFlowProvider";
 
 function BrandMark() {
   return (
@@ -31,24 +30,6 @@ function NavIcon({ icon }: { icon: DashboardNavItem["icon"] }) {
   return <svg viewBox="0 0 24 24" className="size-[17px]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{paths[icon]}</svg>;
 }
 
-function BusinessPicker() {
-  const { activeBusinessId, setActiveBusinessId } = useDemoFlow();
-
-  return (
-    <div className="mb-2 rounded-[10px] border border-line bg-surface-2 p-2">
-      <label htmlFor="workspace-business" className="mb-1.5 block px-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-ink-400">
-        Usaha aktif
-      </label>
-      <div className="relative">
-        <select id="workspace-business" value={activeBusinessId} onChange={(event) => setActiveBusinessId(event.target.value)} className="h-10 w-full appearance-none rounded-[8px] border border-line bg-surface px-2.5 pr-7 text-[11.5px] font-semibold text-ink-900">
-          {dashboardSeed.businesses.map((business) => <option key={business.id} value={business.id}>{business.name} · {business.area}</option>)}
-        </select>
-        <svg viewBox="0 0 20 20" className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="m6 8 4 4 4-4" /></svg>
-      </div>
-    </div>
-  );
-}
-
 function Sidebar() {
   const pathname = usePathname();
 
@@ -62,7 +43,6 @@ function Sidebar() {
         {dashboardSeed.navigation.map((group) => (
           <div key={group.label} className="mb-5">
             <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-ink-400">{group.label}</p>
-            {group.label === "Usaha" ? <BusinessPicker /> : null}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = pathname === item.href || (item.href !== "/demo/dashboard" && pathname.startsWith(`${item.href}/`));

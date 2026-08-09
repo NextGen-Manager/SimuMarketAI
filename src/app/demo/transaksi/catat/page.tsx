@@ -1,11 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
-import { useAutoplay } from "@/demo/useAutoplay";
-import { AMBANG_HARI } from "@/demo/data/transactions";
+import { businessAnalyticsSeed, businessProductsSeed, workspaceSource } from "@/demo/data/workspace";
 import { Button } from "@/components/ui/Button";
 import { PageHead } from "@/components/layout/PageHead";
 import { cn, formatIDR } from "@/lib/format";
@@ -13,29 +12,35 @@ import { cn, formatIDR } from "@/lib/format";
 export default function CatatTransaksi() {
   const router = useRouter();
   const {
-    produk,
+    activeBusinessId,
+    setActiveBusinessId,
     transaksiHariIni,
     catatTransaksi,
-    hariTercatat,
-    tambahHari,
     tandaiSelesai,
   } = useDemoFlow();
-  useAutoplay();
 
-  const [produkId, setProdukId] = useState(produk[0]?.id ?? "");
+  const business = businessProductsSeed.find((item) => item.id === activeBusinessId) ?? businessProductsSeed[0];
+  const analytics = businessAnalyticsSeed.businesses.find((item) => item.id === business.id) ?? businessAnalyticsSeed.businesses[0];
+  const [produkId, setProdukId] = useState<string>(business.products[0]?.id ?? "");
   const [jumlah, setJumlah] = useState(1);
   const cariRef = useRef<HTMLSelectElement>(null);
 
-  const dipilih = produk.find((p) => p.id === produkId);
+  useEffect(() => {
+    setProdukId(business.products[0]?.id ?? "");
+    setJumlah(1);
+  }, [business]);
+
+  const dipilih = business.products.find((product) => product.id === produkId);
+  const scopedTransactions = transaksiHariIni.filter((transaction) => transaction.businessId === business.id);
 
   const totalHariIni = useMemo(
-    () => transaksiHariIni.reduce((a, t) => a + t.jumlah * t.harga, 0),
-    [transaksiHariIni],
+    () => scopedTransactions.reduce((total, transaction) => total + transaction.jumlah * transaction.harga, 0),
+    [scopedTransactions],
   );
 
   function simpan() {
     if (!dipilih) return;
-    catatTransaksi({ produkId, jumlah, harga: dipilih.harga });
+    catatTransaksi({ businessId: business.id, produkId, jumlah, harga: dipilih.sellingPriceIdr });
     setJumlah(1);
     cariRef.current?.focus();
   }
@@ -44,8 +49,29 @@ export default function CatatTransaksi() {
     <div className="mx-auto max-w-[880px] px-6 py-12">
       <PageHead
         judul="Catat Transaksi"
-        sub="Pilih produk, masukkan jumlah, simpan. Target di bawah 10 detik per transaksi."
+        sub="Pilih usaha dan produknya, masukkan jumlah, lalu simpan. Transaksi tidak tercampur antarusaha."
       />
+
+      <div role="tablist" aria-label="Pilih usaha untuk transaksi" className="mb-5 flex flex-wrap gap-2">
+        {businessProductsSeed.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            role="tab"
+            aria-selected={business.id === item.id}
+            onClick={() => setActiveBusinessId(item.id)}
+            className={cn(
+              "rounded-[9px] border px-4 py-2.5 text-left",
+              business.id === item.id
+                ? "border-teal-700 bg-teal-50"
+                : "border-line bg-surface hover:bg-surface-2",
+            )}
+          >
+            <span className={cn("block text-[12.5px] font-bold", business.id === item.id ? "text-teal-700" : "text-ink-900")}>{item.name}</span>
+            <span className="mt-0.5 block text-[10.5px] text-ink-400">{item.area}</span>
+          </button>
+        ))}
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.3fr_1fr]">
         <div className="rounded-[12px] border border-line bg-surface p-5">
@@ -64,9 +90,9 @@ export default function CatatTransaksi() {
                 onChange={(e) => setProdukId(e.target.value)}
                 className="w-full rounded-[8px] border border-line bg-surface px-3 py-2.5 text-[15px] text-ink-900"
               >
-                {produk.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.nama} — {formatIDR(p.harga)}
+                {business.products.map((product) => (
+                  <option key={product.id} value={product.id}>
+                    {product.name} — {formatIDR(product.sellingPriceIdr)}
                   </option>
                 ))}
               </select>
@@ -101,7 +127,7 @@ export default function CatatTransaksi() {
               <div>
                 <span className="label-eyebrow mb-1.5 block">Harga satuan</span>
                 <p className="tnum py-2.5 text-[17px] font-semibold text-ink-900">
-                  {formatIDR(dipilih?.harga ?? 0)}
+                  {formatIDR(dipilih?.sellingPriceIdr ?? 0)}
                 </p>
               </div>
             </div>
@@ -110,7 +136,7 @@ export default function CatatTransaksi() {
               <span className="text-[14px] text-ink-500">
                 Total:{" "}
                 <span className="tnum font-bold text-ink-900">
-                  {formatIDR((dipilih?.harga ?? 0) * jumlah)}
+                  {formatIDR((dipilih?.sellingPriceIdr ?? 0) * jumlah)}
                 </span>
               </span>
               <Button onClick={simpan}>Simpan ⏎</Button>
@@ -133,26 +159,26 @@ export default function CatatTransaksi() {
           <div className="rounded-[12px] border border-line bg-surface p-5">
             <div className="label-eyebrow mb-2">Tersimpan hari ini</div>
             <p className="tnum text-[26px] font-bold text-ink-900">
-              {transaksiHariIni.length}
+              {scopedTransactions.length}
             </p>
             <p className="tnum text-[14px] text-ink-500">
               {formatIDR(totalHariIni)}
             </p>
 
-            {transaksiHariIni.length ? (
+            {scopedTransactions.length ? (
               <ul className="mt-4 max-h-[200px] space-y-1.5 overflow-y-auto border-t border-line pt-3">
-                {transaksiHariIni.map((t, i) => {
-                  const p = produk.find((x) => x.id === t.produkId);
+                {scopedTransactions.map((transaction, index) => {
+                  const product = business.products.find((item) => item.id === transaction.produkId);
                   return (
                     <li
-                      key={i}
+                      key={`${transaction.produkId}-${index}`}
                       className="flex items-baseline justify-between gap-2 text-[13px]"
                     >
                       <span className="truncate text-ink-700">
-                        {t.jumlah}× {p?.nama}
+                        {transaction.jumlah}× {product?.name}
                       </span>
                       <span className="tnum shrink-0 text-ink-500">
-                        {formatIDR(t.jumlah * t.harga)}
+                        {formatIDR(transaction.jumlah * transaction.harga)}
                       </span>
                     </li>
                   );
@@ -168,29 +194,20 @@ export default function CatatTransaksi() {
           <div className="rounded-[12px] border border-line bg-surface-2 p-5">
             <div className="label-eyebrow mb-2">Progres data</div>
             <p className="text-[13.5px] leading-relaxed text-ink-700">
-              {hariTercatat} dari {AMBANG_HARI} hari tercatat.
+              {analytics.daysRecorded} hari tercatat untuk {business.name}.
             </p>
             <div className="mt-2 h-[6px] overflow-hidden rounded-full bg-surface">
               <div
                 className="h-full rounded-full bg-teal-700"
                 style={{
-                  width: `${Math.min(100, (hariTercatat / AMBANG_HARI) * 100)}%`,
+                  width: "100%",
                 }}
               />
             </div>
             <p className="mt-2 text-[12.5px] text-ink-400">
-              Analitik terbuka setelah {AMBANG_HARI} hari. Sebelum itu tren
-              tidak ditampilkan karena datanya belum cukup.
+              Data melewati ambang minimum 7 hari dan dapat dibaca di analitik per usaha.
             </p>
-            {hariTercatat < AMBANG_HARI ? (
-              <Button
-                variant="secondary"
-                onClick={tambahHari}
-                className="mt-3 w-full text-[13px]"
-              >
-                Simulasikan hari berikutnya (demo)
-              </Button>
-            ) : null}
+            <p className="mt-3 text-[10px] leading-4 text-ink-400">{workspaceSource.label} · {workspaceSource.observedAt} · {workspaceSource.confidence}</p>
           </div>
         </div>
       </div>
@@ -202,7 +219,7 @@ export default function CatatTransaksi() {
             router.push("/demo/transaksi/analitik");
           }}
         >
-          Buka Analitik
+          Buka Analitik Gabungan
           <span aria-hidden>→</span>
         </Button>
       </div>

@@ -38,8 +38,8 @@ type Ctx = {
   hapusProduk: (id: string) => void;
   hariTercatat: number;
   tambahHari: () => void;
-  transaksiHariIni: { produkId: string; jumlah: number; harga: number }[];
-  catatTransaksi: (t: { produkId: string; jumlah: number; harga: number }) => void;
+  transaksiHariIni: { businessId: string; produkId: string; jumlah: number; harga: number }[];
+  catatTransaksi: (t: { businessId: string; produkId: string; jumlah: number; harga: number }) => void;
 
   varian: Varian;
   setVarian: (v: Varian) => void;
@@ -62,7 +62,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
   const [produk, setProduk] = useState<Produk[]>(produkAwal);
   const [hariTercatat, setHariTercatat] = useState(hariTercatatAwal);
   const [transaksiHariIni, setTransaksiHariIni] = useState<
-    { produkId: string; jumlah: number; harga: number }[]
+    { businessId: string; produkId: string; jumlah: number; harga: number }[]
   >([]);
   const [varian, setVarian] = useState<Varian>("normal");
   const [autoplay, setAutoplay] = useState(false);
@@ -103,7 +103,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const catatTransaksi = useCallback(
-    (t: { produkId: string; jumlah: number; harga: number }) => {
+    (t: { businessId: string; produkId: string; jumlah: number; harga: number }) => {
       setTransaksiHariIni((prev) => [t, ...prev]);
     },
     [],

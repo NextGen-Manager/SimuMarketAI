@@ -1,8 +1,5 @@
-"use client";
-
 import Link from "next/link";
 import { dashboardSeed, type DashboardNavItem } from "@/demo/data/dashboard";
-import { useDemoFlow } from "@/demo/DemoFlowProvider";
 import { formatIDR } from "@/lib/format";
 
 function BrandMark() {
@@ -44,8 +41,6 @@ function SourceNote({ compact = false }: { compact?: boolean }) {
 }
 
 function Sidebar() {
-  const { activeBusinessId, setActiveBusinessId } = useDemoFlow();
-
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-line bg-surface lg:flex">
       <div className="flex h-16 items-center gap-3 border-b border-line px-5">
@@ -60,23 +55,6 @@ function Sidebar() {
         {dashboardSeed.navigation.map((group) => (
           <div key={group.label} className="mb-5">
             <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-ink-400">{group.label}</p>
-            {group.label === "Usaha" ? (
-              <div className="mb-2 rounded-[10px] border border-line bg-surface-2 p-2">
-                <label htmlFor="business" className="mb-1.5 block px-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-ink-400">
-                  Usaha aktif
-                </label>
-                <div className="relative">
-                  <select id="business" value={activeBusinessId} onChange={(event) => setActiveBusinessId(event.target.value)} className="h-10 w-full appearance-none rounded-[8px] border border-line bg-surface px-2.5 pr-7 text-[11.5px] font-semibold text-ink-900">
-                    {dashboardSeed.businesses.map((business) => (
-                      <option key={business.id} value={business.id}>{business.name} · {business.area}</option>
-                    ))}
-                  </select>
-                  <svg viewBox="0 0 20 20" className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-                    <path d="m6 8 4 4 4-4" />
-                  </svg>
-                </div>
-              </div>
-            ) : null}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = item.href === "/demo/dashboard";
@@ -154,9 +132,6 @@ function Topbar() {
 }
 
 export default function DashboardPage() {
-  const { activeBusinessId } = useDemoFlow();
-  const activeBusiness = dashboardSeed.businesses.find((business) => business.id === activeBusinessId) ?? dashboardSeed.businesses[0];
-
   return (
     <div className="min-h-screen bg-canvas pb-[68px] lg:pb-0 lg:pl-[248px]">
       <Sidebar />
@@ -167,7 +142,7 @@ export default function DashboardPage() {
             <div>
               <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700">Beranda usaha</p>
               <h1 className="text-[24px] font-bold tracking-[-0.025em] text-ink-900 sm:text-[28px]">Selamat pagi, {dashboardSeed.user.name}</h1>
-              <p className="mt-1 text-[13px] text-ink-500">Berikut hal terpenting untuk {activeBusiness.name} hari ini.</p>
+              <p className="mt-1 text-[13px] text-ink-500">Ringkasan gabungan seluruh usaha dan hal yang perlu ditindaklanjuti hari ini.</p>
             </div>
             <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center gap-2 rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface transition-colors hover:bg-teal-600">
               <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M10 3v14M3 10h14" /></svg>
@@ -185,19 +160,19 @@ export default function DashboardPage() {
                 <h2 id="today-title" className="max-w-[620px] text-[21px] font-bold tracking-[-0.02em] text-ink-900 sm:text-[24px]">{dashboardSeed.primaryState.title}</h2>
                 <p className="mt-2 max-w-[600px] text-[13.5px] leading-6 text-ink-500">{dashboardSeed.primaryState.description}</p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface hover:bg-teal-600">Catat sekarang</Link>
+                  <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface hover:bg-teal-600">Buka transaksi</Link>
                   <span className="text-[11.5px] font-semibold text-ink-400">Kurang dari 10 detik</span>
                 </div>
               </div>
               <div className="border-t border-line bg-surface-2 p-5 sm:p-6 lg:border-l lg:border-t-0 xl:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-400">Menuju analitik</p>
+                    <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-400">Cakupan operasional</p>
                     <p className="mt-2 text-[19px] font-bold text-ink-900 tnum">{dashboardSeed.primaryState.recordedDays}</p>
                   </div>
                   <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10.5px] font-bold text-amber-600">{dashboardSeed.primaryState.remainingDays}</span>
                 </div>
-                <div className="mt-5 h-2 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Progres data menuju analitik" aria-valuenow={dashboardSeed.primaryState.progressPercent} aria-valuemin={0} aria-valuemax={100}>
+                <div className="mt-5 h-2 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Cakupan pencatatan usaha" aria-valuenow={dashboardSeed.primaryState.progressPercent} aria-valuemin={0} aria-valuemax={100}>
                   <div className="h-full rounded-full bg-teal-700" style={{ width: `${dashboardSeed.primaryState.progressPercent}%` }} />
                 </div>
                 <p className="mt-4 text-[12px] leading-5 text-ink-500">{dashboardSeed.primaryState.reward}</p>
@@ -208,9 +183,9 @@ export default function DashboardPage() {
 
           <section aria-label="Ringkasan hari ini" className="mt-4 grid gap-3 sm:grid-cols-3">
             {[
-              { label: "Transaksi hari ini", value: dashboardSeed.today.transactions, note: "Belum ada pencatatan" },
-              { label: "Pendapatan hari ini", value: formatIDR(dashboardSeed.today.revenueIdr), note: "Transaksi terkonfirmasi" },
-              { label: "Katalog aktif", value: dashboardSeed.today.productsActive, note: "Siap dipilih saat mencatat" },
+              { label: "Transaksi hari ini", value: dashboardSeed.today.transactions, note: "Gabungan dua usaha" },
+              { label: "Pendapatan hari ini", value: formatIDR(dashboardSeed.today.revenueIdr), note: "Gabungan transaksi terkonfirmasi" },
+              { label: "Katalog aktif", value: dashboardSeed.today.productsActive, note: "Gabungan katalog usaha" },
             ].map((metric) => (
               <article key={metric.label} className="rounded-[12px] border border-line bg-surface p-4">
                 <p className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-ink-400">{metric.label}</p>
@@ -224,8 +199,8 @@ export default function DashboardPage() {
             <section aria-labelledby="plan-title" className="overflow-hidden rounded-[14px] border border-line bg-surface">
               <div className="flex items-center justify-between gap-4 border-b border-line px-5 py-4">
                 <div>
-                  <h2 id="plan-title" className="text-[15px] font-bold text-ink-900">Rencana 30 hari</h2>
-                  <p className="mt-0.5 text-[11px] text-ink-400">Tindakan prioritas dari laporan terakhirmu</p>
+                  <h2 id="plan-title" className="text-[15px] font-bold text-ink-900">Rencana lintas usaha</h2>
+                  <p className="mt-0.5 text-[11px] text-ink-400">Tindakan prioritas dari laporan seluruh usaha</p>
                 </div>
                 <span className="rounded-full bg-teal-50 px-2.5 py-1 text-[10.5px] font-bold text-teal-700">{dashboardSeed.plan.progress}</span>
               </div>

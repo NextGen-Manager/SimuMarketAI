@@ -47,7 +47,7 @@ export default function StrukPage() {
 
   function simpan() {
     items.forEach((it) =>
-      catatTransaksi({ produkId: it.cocok, jumlah: it.jumlah, harga: it.harga }),
+      catatTransaksi({ businessId: "kopi-senja", produkId: it.cocok, jumlah: it.jumlah, harga: it.harga }),
     );
     setDisimpan(true);
     tandaiSelesai("struk");
