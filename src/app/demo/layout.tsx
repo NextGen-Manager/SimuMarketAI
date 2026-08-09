@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { DemoFlowProvider } from "@/demo/DemoFlowProvider";
-import { Header } from "@/demo/components/Header";
+import { DemoChrome } from "@/demo/components/DemoChrome";
 
 export const metadata: Metadata = {
   title: "SimuMarket AI — Demo",
@@ -19,16 +19,7 @@ export default function DemoLayout({
 }) {
   return (
     <DemoFlowProvider>
-      <Header />
-      <main>{children}</main>
-      <footer className="mt-20 border-t border-line bg-surface">
-        <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-6 py-8 text-[12.5px] text-ink-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 SimuMarket AI — Solusi Cerdas UMKM.</p>
-          <p className="max-w-[46ch]">
-            Seluruh data pada demo ini adalah contoh, bukan hasil analisis nyata.
-          </p>
-        </div>
-      </footer>
+      <DemoChrome>{children}</DemoChrome>
     </DemoFlowProvider>
   );
 }
