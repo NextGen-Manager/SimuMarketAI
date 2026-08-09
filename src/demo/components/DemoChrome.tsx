@@ -1,18 +1,21 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useDemoFlow } from "@/demo/DemoFlowProvider";
 import { Header } from "./Header";
 import { WorkspaceShell } from "./WorkspaceShell";
 
 export function DemoChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { journey } = useDemoFlow();
 
   if (pathname === "/demo/dashboard") {
     return <>{children}</>;
   }
 
+  const isTransactionPage = pathname.startsWith("/demo/transaksi");
   const usesWorkspace =
-    pathname.startsWith("/demo/transaksi") ||
+    (isTransactionPage && journey !== "B") ||
     pathname.startsWith("/demo/laporan") ||
     pathname === "/demo/edukasi" ||
     pathname === "/demo/analisis/riwayat";

@@ -47,6 +47,7 @@ export const stepsA = [
 export const stepsB = [
   { id: "produk", label: "Produk", href: "/demo/transaksi/produk" },
   { id: "catat", label: "Catat", href: "/demo/transaksi/catat" },
+  { id: "struk", label: "Struk", href: "/demo/transaksi/struk" },
   { id: "analitik", label: "Analitik", href: "/demo/transaksi/analitik" },
 ] as const;
 

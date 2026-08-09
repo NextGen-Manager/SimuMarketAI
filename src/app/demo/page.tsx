@@ -8,12 +8,16 @@ import { PageHead } from "@/components/layout/PageHead";
 
 export default function PilihJourney() {
   const router = useRouter();
-  const { pilihJourney, setAutoplay, reset } = useDemoFlow();
+  const { pilihJourney, reset } = useDemoFlow();
 
-  function mulai(j: JourneyId, otomatis: boolean) {
+  function mulai(j: JourneyId) {
     reset();
     pilihJourney(j);
-    setAutoplay(otomatis);
+    router.push(journeys[j].mulai);
+  }
+
+  function bukaDashboard() {
+    reset();
     router.push("/demo/dashboard");
   }
 
@@ -21,7 +25,7 @@ export default function PilihJourney() {
     <div className="mx-auto max-w-[980px] px-6 py-16">
       <PageHead
         judul="Pilih alur yang ingin dilihat"
-        sub="SimuMarket AI melayani dua jenis pengguna dengan kebutuhan yang berbeda. Pilih salah satu untuk menjalankannya sendiri, atau putar otomatis."
+        sub="SimuMarket AI melayani dua jenis pengguna dengan kebutuhan yang berbeda. Pilih flow untuk mengikuti perjalanan penggunanya dari awal."
         tengah
       />
 
@@ -65,27 +69,24 @@ export default function PilihJourney() {
                 ))}
               </ol>
 
-              <div className="mt-6 flex flex-wrap gap-2">
-                <Button onClick={() => mulai(id, false)} className="flex-1">
-                  Jalankan
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => mulai(id, true)}
-                  className="flex-1"
-                >
-                  <span aria-hidden>▶</span> Otomatis
-                </Button>
-              </div>
+              <Button onClick={() => mulai(id)} className="mt-6 w-full">
+                Mulai Flow {id}
+                <span aria-hidden>→</span>
+              </Button>
             </div>
           );
         })}
       </div>
 
-      <p className="mt-8 text-center text-[13px] leading-relaxed text-ink-400">
-        Mode otomatis berjalan sendiri sampai selesai. Klik di mana pun untuk
-        mengambil alih kendali.
-      </p>
+      <div className="mt-9 flex flex-col items-center border-t border-line pt-7 text-center">
+        <p className="text-[12.5px] text-ink-400">
+          Ingin langsung melihat kondisi aplikasi setelah usaha memiliki data?
+        </p>
+        <Button variant="secondary" onClick={bukaDashboard} className="mt-3">
+          Buka Dashboard Demo
+          <span aria-hidden>→</span>
+        </Button>
+      </div>
     </div>
   );
 }
