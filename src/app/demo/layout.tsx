@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DemoFlowProvider } from "@/demo/DemoFlowProvider";
 import { DemoChrome } from "@/demo/components/DemoChrome";
+import "leaflet/dist/leaflet.css";
 
 export const metadata: Metadata = {
   title: "SimuMarket AI — Demo",
