@@ -19,6 +19,8 @@ export function ScoreGauge({
   const keliling = Math.PI * r; // setengah lingkaran
   const terisi = (v / 100) * keliling;
 
+  const coordinate = (value: number) => value.toFixed(6);
+
   // Posisi jarum pada busur
   const sudut = Math.PI * (1 - v / 100);
   const jx = cx + r * Math.cos(sudut);
@@ -59,18 +61,28 @@ export function ScoreGauge({
           return (
             <line
               key={b}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
+              x1={coordinate(x1)}
+              y1={coordinate(y1)}
+              x2={coordinate(x2)}
+              y2={coordinate(y2)}
               stroke="var(--color-surface)"
               strokeWidth="2"
             />
           );
         })}
         {/* jarum */}
-        <circle cx={jx} cy={jy} r="7" fill="var(--color-ink-900)" />
-        <circle cx={jx} cy={jy} r="3" fill="var(--color-surface)" />
+        <circle
+          cx={coordinate(jx)}
+          cy={coordinate(jy)}
+          r="7"
+          fill="var(--color-ink-900)"
+        />
+        <circle
+          cx={coordinate(jx)}
+          cy={coordinate(jy)}
+          r="3"
+          fill="var(--color-surface)"
+        />
 
         <text
           x={cx}
