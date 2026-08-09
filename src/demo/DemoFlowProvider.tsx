@@ -11,16 +11,28 @@ import {
 import { profilAwal, type Profil } from "./data/profile";
 import { produkAwal, hariTercatatAwal, type Produk } from "./data/transactions";
 import { modulWajib } from "./data/education";
+import {
+  businessProductsSeed,
+  type BusinessCatalog,
+  type BusinessProduct,
+} from "./data/workspace";
 import type { JourneyId } from "./journeys";
 
 export type Varian = "normal" | "parsial";
+export type DemoRole = "owner" | "cashier";
 
 type Ctx = {
   journey: JourneyId | null;
   pilihJourney: (j: JourneyId) => void;
+  demoRole: DemoRole;
+  cashierBusinessId: string | null;
+  activateOwnerMode: () => void;
+  activateCashierMode: (businessId: string) => void;
 
   activeBusinessId: string;
   setActiveBusinessId: (id: string) => void;
+  businessCatalogs: BusinessCatalog[];
+  addBusinessProduct: (businessId: string, product: BusinessProduct) => void;
 
   langkahSelesai: Set<string>;
   tandaiSelesai: (id: string) => void;
@@ -54,7 +66,12 @@ const DemoCtx = createContext<Ctx | null>(null);
 
 export function DemoFlowProvider({ children }: { children: ReactNode }) {
   const [journey, setJourney] = useState<JourneyId | null>(null);
+  const [demoRole, setDemoRole] = useState<DemoRole>("owner");
+  const [cashierBusinessId, setCashierBusinessId] = useState<string | null>(null);
   const [activeBusinessId, setActiveBusinessId] = useState("kopi-senja");
+  const [businessCatalogs, setBusinessCatalogs] = useState<BusinessCatalog[]>(
+    () => structuredClone(businessProductsSeed),
+  );
   const [langkahSelesai, setLangkahSelesai] = useState<Set<string>>(new Set());
   const [profil, setProfil] = useState<Profil>(profilAwal);
   const [fieldDiubah, setFieldDiubah] = useState<Set<string>>(new Set());
@@ -68,6 +85,30 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
   const [autoplay, setAutoplay] = useState(false);
 
   const pilihJourney = useCallback((j: JourneyId) => setJourney(j), []);
+
+  const activateOwnerMode = useCallback(() => {
+    setDemoRole("owner");
+    setCashierBusinessId(null);
+  }, []);
+
+  const activateCashierMode = useCallback((businessId: string) => {
+    setDemoRole("cashier");
+    setCashierBusinessId(businessId);
+    setActiveBusinessId(businessId);
+  }, []);
+
+  const addBusinessProduct = useCallback(
+    (businessId: string, product: BusinessProduct) => {
+      setBusinessCatalogs((catalogs) =>
+        catalogs.map((catalog) =>
+          catalog.id === businessId
+            ? { ...catalog, products: [...catalog.products, product] }
+            : catalog,
+        ),
+      );
+    },
+    [],
+  );
 
   const tandaiSelesai = useCallback((id: string) => {
     setLangkahSelesai((s) => new Set(s).add(id));
@@ -115,7 +156,10 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
 
   const reset = useCallback(() => {
     setJourney(null);
+    setDemoRole("owner");
+    setCashierBusinessId(null);
     setActiveBusinessId("kopi-senja");
+    setBusinessCatalogs(structuredClone(businessProductsSeed));
     setLangkahSelesai(new Set());
     setProfil(profilAwal);
     setFieldDiubah(new Set());
@@ -131,8 +175,14 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     () => ({
       journey,
       pilihJourney,
+      demoRole,
+      cashierBusinessId,
+      activateOwnerMode,
+      activateCashierMode,
       activeBusinessId,
       setActiveBusinessId,
+      businessCatalogs,
+      addBusinessProduct,
       langkahSelesai,
       tandaiSelesai,
       profil,
@@ -157,7 +207,13 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     [
       journey,
       pilihJourney,
+      demoRole,
+      cashierBusinessId,
+      activateOwnerMode,
+      activateCashierMode,
       activeBusinessId,
+      businessCatalogs,
+      addBusinessProduct,
       langkahSelesai,
       tandaiSelesai,
       profil,

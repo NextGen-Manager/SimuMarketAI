@@ -25,9 +25,9 @@ export const journeys = {
     ringkas: "Catat harian · analitik setelah 7 hari",
     langkah: [
       { label: "Daftarkan produk", href: "/demo/transaksi/produk" },
-      { label: "Catat transaksi harian", href: "/demo/transaksi/catat" },
-      { label: "Atau unggah foto struk", href: "/demo/transaksi/struk" },
-      { label: "Buka analitik", href: "/demo/transaksi/analitik" },
+      { label: "Catat manual atau unggah struk", href: "/demo/transaksi/catat" },
+      { label: "Kumpulkan data minimal 7 hari", href: "/demo/transaksi" },
+      { label: "Baca insight dan ekspor laporan", href: "/demo/transaksi/analitik" },
     ],
     mulai: "/demo/transaksi/produk",
   },
@@ -46,8 +46,12 @@ export const stepsA = [
 /** Rute Journey B. */
 export const stepsB = [
   { id: "produk", label: "Produk", href: "/demo/transaksi/produk" },
-  { id: "catat", label: "Catat", href: "/demo/transaksi/catat" },
-  { id: "struk", label: "Struk", href: "/demo/transaksi/struk" },
+  {
+    id: "input",
+    label: "Transaksi",
+    href: "/demo/transaksi/catat",
+    paths: ["/demo/transaksi/catat", "/demo/transaksi/struk"],
+  },
   { id: "analitik", label: "Analitik", href: "/demo/transaksi/analitik" },
 ] as const;
 

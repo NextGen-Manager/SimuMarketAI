@@ -61,6 +61,10 @@ export const dashboardSeed = {
     revenueIdr: 986_000,
     productsActive: "8 produk aktif",
   },
+  cashierToday: [
+    { businessId: "kopi-senja", transactions: "24 transaksi", revenueIdr: 612_000, lastEntry: "Es Kopi Susu Gula Aren · 08.14 WIB", shift: "Pagi · 07.00–15.00 WIB" },
+    { businessId: "dapur-rasa", transactions: "13 transaksi", revenueIdr: 374_000, lastEntry: "Nasi Ayam Sambal Matah · 08.09 WIB", shift: "Pagi · 07.00–15.00 WIB" },
+  ],
   plan: {
     progress: "1 dari 4 selesai",
     items: [

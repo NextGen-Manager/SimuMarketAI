@@ -4,6 +4,23 @@ export const workspaceSource = {
   confidence: "Data seed terverifikasi untuk demo",
 } as const;
 
+export type BusinessProduct = {
+  id: string;
+  name: string;
+  category: string;
+  sellingPriceIdr: number;
+  costIdr: number | null;
+  marginPercent: number | null;
+  status: "Aktif" | "Nonaktif";
+};
+
+export type BusinessCatalog = {
+  id: string;
+  name: string;
+  area: string;
+  products: BusinessProduct[];
+};
+
 export const businessAnalyticsSeed = {
   period: "3–9 Agustus 2026",
   composite: {
@@ -36,10 +53,26 @@ export const businessAnalyticsSeed = {
         { label: "Min", valueIdr: 2_040_000, heightPercent: 54 },
       ],
       products: [
-        { name: "Es Kopi Susu Gula Aren", revenueIdr: 9_968_400, sharePercent: 54 },
-        { name: "Americano", revenueIdr: 3_507_400, sharePercent: 19 },
-        { name: "Manual Brew V60", revenueIdr: 2_584_400, sharePercent: 14 },
-        { name: "Pastry", revenueIdr: 2_399_800, sharePercent: 13 },
+        { name: "Es Kopi Susu Gula Aren", revenueIdr: 9_968_400, sharePercent: 54, unitsSold: 188, rank: "Terlaris" },
+        { name: "Americano", revenueIdr: 3_507_400, sharePercent: 19, unitsSold: 96, rank: "Normal" },
+        { name: "Manual Brew V60", revenueIdr: 2_584_400, sharePercent: 14, unitsSold: 61, rank: "Normal" },
+        { name: "Brownies Fudge", revenueIdr: 553_800, sharePercent: 3, unitsSold: 9, rank: "Terendah" },
+      ],
+      hourlySales: [
+        { label: "08", transactions: 18, heightPercent: 29 },
+        { label: "10", transactions: 31, heightPercent: 50 },
+        { label: "12", transactions: 62, heightPercent: 100 },
+        { label: "14", transactions: 38, heightPercent: 61 },
+        { label: "16", transactions: 29, heightPercent: 47 },
+        { label: "18", transactions: 46, heightPercent: 74 },
+        { label: "20", transactions: 21, heightPercent: 34 },
+      ],
+      insights: [
+        { title: "Penjualan terkonsentrasi saat makan siang", body: "Pukul 12.00–13.00 menjadi jendela transaksi terpadat.", action: "Siapkan stok dan kru sebelum pukul 11.30.", evidence: "62 transaksi · agregat per jam · 3–9 Agustus 2026" },
+        { title: "Brownies Fudge perlu dievaluasi", body: "Produk tetap memiliki marjin positif, tetapi volumenya paling rendah.", action: "Uji bundling sebelum mengurangi produk dari katalog.", evidence: "9 porsi · marjin 51% · 7 hari" },
+      ],
+      recommendations: [
+        { title: "Kurangi ketergantungan pada satu menu", body: "Dorong Americano dan Manual Brew melalui penempatan menu agar pendapatan tidak bergantung pada satu produk.", evidence: "54% pendapatan berasal dari Es Kopi Susu Gula Aren · 7 hari" },
       ],
     },
     {
@@ -64,17 +97,33 @@ export const businessAnalyticsSeed = {
         { label: "Min", valueIdr: 1_160_000, heightPercent: 58 },
       ],
       products: [
-        { name: "Nasi Ayam Sambal Matah", revenueIdr: 4_214_800, sharePercent: 41 },
-        { name: "Rice Bowl Rendang", revenueIdr: 2_878_400, sharePercent: 28 },
-        { name: "Es Teh Lemon", revenueIdr: 1_644_800, sharePercent: 16 },
-        { name: "Menu lainnya", revenueIdr: 1_542_000, sharePercent: 15 },
+        { name: "Nasi Ayam Sambal Matah", revenueIdr: 4_214_800, sharePercent: 41, unitsSold: 132, rank: "Terlaris" },
+        { name: "Rice Bowl Rendang", revenueIdr: 2_878_400, sharePercent: 28, unitsSold: 82, rank: "Normal" },
+        { name: "Es Teh Lemon", revenueIdr: 1_644_800, sharePercent: 16, unitsSold: 137, rank: "Normal" },
+        { name: "Puding Gula Aren", revenueIdr: 493_000, sharePercent: 5, unitsSold: 29, rank: "Terendah" },
+      ],
+      hourlySales: [
+        { label: "08", transactions: 9, heightPercent: 24 },
+        { label: "10", transactions: 21, heightPercent: 55 },
+        { label: "12", transactions: 38, heightPercent: 100 },
+        { label: "14", transactions: 25, heightPercent: 66 },
+        { label: "16", transactions: 14, heightPercent: 37 },
+        { label: "18", transactions: 27, heightPercent: 71 },
+        { label: "20", transactions: 11, heightPercent: 29 },
+      ],
+      insights: [
+        { title: "Permintaan tertinggi terjadi saat makan siang", body: "Jendela pukul 11.00–13.00 menyumbang aktivitas terbesar.", action: "Siapkan bahan utama sebelum layanan makan siang dimulai.", evidence: "38 transaksi pada pukul 12.00 · agregat per jam · 3–9 Agustus 2026" },
+        { title: "Puding Gula Aren berada di peringkat terbawah", body: "Volume produk lebih rendah daripada menu lain pada periode yang sama.", action: "Uji penempatan dekat kasir selama satu minggu berikutnya.", evidence: "29 porsi · agregat produk · 7 hari" },
+      ],
+      recommendations: [
+        { title: "Pertahankan fokus pada menu makan siang", body: "Kapasitas persiapan lebih penting daripada menambah variasi menu pada jam puncak.", evidence: "Jendela teramai 11.00–13.00 · 14 hari data terkonfirmasi" },
       ],
     },
   ],
   source: workspaceSource,
 } as const;
 
-export const businessProductsSeed = [
+export const businessProductsSeed: BusinessCatalog[] = [
   {
     id: "kopi-senja",
     name: "Kopi Senja",
@@ -98,7 +147,30 @@ export const businessProductsSeed = [
       { id: "DR-004", name: "Puding Gula Aren", category: "Pencuci mulut", sellingPriceIdr: 16_000, costIdr: 7_800, marginPercent: 51, status: "Nonaktif" },
     ],
   },
-] as const;
+];
+
+export const businessReceiptSeeds = {
+  "kopi-senja": {
+    merchant: "Kedai Kopi Senja",
+    date: "5 Agustus 2026, 12.10 WIB",
+    totalIdr: 80_000,
+    items: [
+      { raw: "ES KOPI SUSU GLA AREN", productId: "KS-001", quantity: 2, unitPriceIdr: 20_000, confidencePercent: 76 },
+      { raw: "AMERICANO", productId: "KS-003", quantity: 1, unitPriceIdr: 18_000, confidencePercent: 93 },
+      { raw: "CROISSANT BTR", productId: "KS-004", quantity: 1, unitPriceIdr: 22_000, confidencePercent: 68 },
+    ],
+  },
+  "dapur-rasa": {
+    merchant: "Dapur Rasa",
+    date: "7 Agustus 2026, 12.24 WIB",
+    totalIdr: 111_000,
+    items: [
+      { raw: "NASI AYM SMBL MTH", productId: "DR-001", quantity: 2, unitPriceIdr: 32_000, confidencePercent: 72 },
+      { raw: "RICE BOWL RNDG", productId: "DR-002", quantity: 1, unitPriceIdr: 35_000, confidencePercent: 86 },
+      { raw: "ES TEH LEMON", productId: "DR-003", quantity: 1, unitPriceIdr: 12_000, confidencePercent: 91 },
+    ],
+  },
+} as const;
 
 export const analysisHistorySeed = [
   {

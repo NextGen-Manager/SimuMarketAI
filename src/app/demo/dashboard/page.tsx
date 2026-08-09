@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { dashboardSeed, type DashboardNavItem } from "@/demo/data/dashboard";
+import { useDemoFlow } from "@/demo/DemoFlowProvider";
+import { RoleSwitcher, WorkspaceShell } from "@/demo/components/WorkspaceShell";
 import { formatIDR } from "@/lib/format";
 
 function BrandMark() {
@@ -72,15 +76,7 @@ function Sidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-line p-3">
-        <div className="flex items-center gap-3 rounded-[10px] px-2 py-2">
-          <span className="grid size-8 place-items-center rounded-full bg-teal-700 text-[11px] font-bold text-surface">{dashboardSeed.user.initials}</span>
-          <div className="min-w-0">
-            <p className="truncate text-[12px] font-bold text-ink-900">{dashboardSeed.user.name} Pratama</p>
-            <p className="truncate text-[10.5px] text-ink-400">Akun demo pemilik</p>
-          </div>
-        </div>
-      </div>
+      <div className="border-t border-line p-3"><RoleSwitcher /></div>
     </aside>
   );
 }
@@ -125,13 +121,58 @@ function Topbar() {
         <button type="button" aria-label="Bantuan" className="grid size-9 place-items-center rounded-[9px] border border-line text-ink-500 hover:bg-surface-2">
           <svg viewBox="0 0 24 24" className="size-[17px]" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden><circle cx="12" cy="12" r="9" /><path d="M9.8 9a2.3 2.3 0 1 1 3.5 2c-.8.5-1.3 1-1.3 2M12 17h.01" /></svg>
         </button>
-        <span className="grid size-9 place-items-center rounded-full bg-teal-700 text-[11px] font-bold text-surface">{dashboardSeed.user.initials}</span>
+        <div className="w-[190px]"><RoleSwitcher align="right" /></div>
       </div>
     </header>
   );
 }
 
+function CashierDashboard() {
+  const { cashierBusinessId } = useDemoFlow();
+  const business = dashboardSeed.businesses.find((item) => item.id === cashierBusinessId) ?? dashboardSeed.businesses[0];
+  const today = dashboardSeed.cashierToday.find((item) => item.businessId === business.id) ?? dashboardSeed.cashierToday[0];
+
+  return (
+    <WorkspaceShell>
+      <main className="mx-auto max-w-[1100px] px-4 py-6 sm:px-6 xl:px-8 xl:py-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-teal-700">Dashboard kasir · {business.name}</p>
+            <h1 className="mt-1 text-[27px] font-bold tracking-tight text-ink-900">Selamat bertugas, Raka</h1>
+            <p className="mt-1 text-[13px] text-ink-500">Ringkasan operasional toko yang ditugaskan untuk shift ini.</p>
+          </div>
+          <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface hover:bg-teal-600">+ Catat transaksi</Link>
+        </div>
+
+        <section aria-label="Ringkasan shift" className="mt-6 grid gap-3 sm:grid-cols-3">
+          <article className="rounded-[13px] border border-line bg-surface p-5"><p className="label-eyebrow">Transaksi hari ini</p><p className="tnum mt-2 text-[25px] font-bold text-ink-900">{today.transactions}</p><p className="mt-1 text-[11px] text-ink-400">Transaksi terkonfirmasi</p></article>
+          <article className="rounded-[13px] border border-line bg-surface p-5"><p className="label-eyebrow">Pendapatan tercatat</p><p className="tnum mt-2 text-[25px] font-bold text-ink-900">{formatIDR(today.revenueIdr)}</p><p className="mt-1 text-[11px] text-ink-400">Khusus {business.name}</p></article>
+          <article className="rounded-[13px] border border-line bg-surface p-5"><p className="label-eyebrow">Shift aktif</p><p className="mt-2 text-[17px] font-bold text-ink-900">{today.shift}</p><p className="mt-1 text-[11px] text-ink-400">Mode demo kasir satu toko</p></article>
+        </section>
+
+        <section className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+          <article className="rounded-[14px] border border-line bg-surface p-6">
+            <p className="label-eyebrow">Aksi utama</p>
+            <h2 className="mt-2 text-[20px] font-bold text-ink-900">Catat penjualan tanpa membuka data pemilik</h2>
+            <p className="mt-2 max-w-xl text-[13px] leading-6 text-ink-500">Kasir dapat memilih produk beserta harga jual dan menyimpan jumlah terjual. HPP, marjin, analitik, laporan, dan Market Analysis tidak tersedia dalam mode ini.</p>
+            <Link href="/demo/transaksi/catat" className="mt-5 inline-flex h-10 items-center rounded-[9px] bg-teal-700 px-4 text-[12px] font-bold text-surface">Buka Transaction Management →</Link>
+          </article>
+          <article className="rounded-[14px] border border-line bg-surface p-6">
+            <p className="label-eyebrow">Entri terakhir</p>
+            <p className="mt-3 text-[15px] font-bold text-ink-900">{today.lastEntry}</p>
+            <p className="mt-2 text-[12px] leading-5 text-ink-400">Sumber: transaksi terkonfirmasi · {dashboardSeed.meta.observedAt} · {dashboardSeed.meta.confidence}</p>
+          </article>
+        </section>
+      </main>
+    </WorkspaceShell>
+  );
+}
+
 export default function DashboardPage() {
+  const { demoRole } = useDemoFlow();
+
+  if (demoRole === "cashier") return <CashierDashboard />;
+
   return (
     <div className="min-h-screen bg-canvas pb-[68px] lg:pb-0 lg:pl-[248px]">
       <Sidebar />

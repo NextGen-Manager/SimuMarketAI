@@ -1,13 +1,31 @@
 "use client";
 
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
 import { Header } from "./Header";
 import { WorkspaceShell } from "./WorkspaceShell";
 
 export function DemoChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { journey } = useDemoFlow();
+  const router = useRouter();
+  const { journey, demoRole } = useDemoFlow();
+  const cashierAllowed =
+    pathname === "/demo/dashboard" ||
+    pathname === "/demo/transaksi" ||
+    pathname === "/demo/transaksi/catat" ||
+    pathname === "/demo/transaksi/struk";
+
+  useEffect(() => {
+    if (demoRole === "cashier" && !cashierAllowed && pathname !== "/demo") {
+      router.replace("/demo/dashboard");
+    }
+  }, [cashierAllowed, demoRole, pathname, router]);
+
+  if (demoRole === "cashier" && !cashierAllowed && pathname !== "/demo") {
+    return null;
+  }
 
   if (pathname === "/demo/dashboard") {
     return <>{children}</>;
