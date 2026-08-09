@@ -28,7 +28,7 @@ export const dashboardSeed = {
       label: "Analisis",
       items: [
         { label: "Market Analysis", href: "/demo/analisis/input", icon: "analysis", badge: "3" },
-        { label: "Riwayat Analisis", href: "/demo/laporan", icon: "history" },
+        { label: "Riwayat Analisis", href: "/demo/analisis/riwayat", icon: "history" },
       ],
     },
     {

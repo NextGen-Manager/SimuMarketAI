@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { dashboardSeed, type DashboardNavItem } from "@/demo/data/dashboard";
+import { useDemoFlow } from "@/demo/DemoFlowProvider";
 import { formatIDR } from "@/lib/format";
 
 function BrandMark() {
@@ -41,6 +44,8 @@ function SourceNote({ compact = false }: { compact?: boolean }) {
 }
 
 function Sidebar() {
+  const { activeBusinessId, setActiveBusinessId } = useDemoFlow();
+
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[248px] flex-col border-r border-line bg-surface lg:flex">
       <div className="flex h-16 items-center gap-3 border-b border-line px-5">
@@ -51,26 +56,27 @@ function Sidebar() {
         </div>
       </div>
 
-      <div className="border-b border-line p-3">
-        <label htmlFor="business" className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.12em] text-ink-400">
-          Usaha aktif
-        </label>
-        <div className="relative">
-          <select id="business" defaultValue={dashboardSeed.businesses[0].id} className="h-12 w-full appearance-none rounded-[10px] border border-line bg-surface-2 px-3 pr-8 text-[12.5px] font-semibold text-ink-900">
-            {dashboardSeed.businesses.map((business) => (
-              <option key={business.id} value={business.id}>{business.name} · {business.area}</option>
-            ))}
-          </select>
-          <svg viewBox="0 0 20 20" className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-            <path d="m6 8 4 4 4-4" />
-          </svg>
-        </div>
-      </div>
-
       <nav aria-label="Navigasi utama" className="flex-1 overflow-y-auto px-3 py-4">
         {dashboardSeed.navigation.map((group) => (
           <div key={group.label} className="mb-5">
             <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-ink-400">{group.label}</p>
+            {group.label === "Usaha" ? (
+              <div className="mb-2 rounded-[10px] border border-line bg-surface-2 p-2">
+                <label htmlFor="business" className="mb-1.5 block px-1 text-[9.5px] font-bold uppercase tracking-[0.12em] text-ink-400">
+                  Usaha aktif
+                </label>
+                <div className="relative">
+                  <select id="business" value={activeBusinessId} onChange={(event) => setActiveBusinessId(event.target.value)} className="h-10 w-full appearance-none rounded-[8px] border border-line bg-surface px-2.5 pr-7 text-[11.5px] font-semibold text-ink-900">
+                    {dashboardSeed.businesses.map((business) => (
+                      <option key={business.id} value={business.id}>{business.name} · {business.area}</option>
+                    ))}
+                  </select>
+                  <svg viewBox="0 0 20 20" className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                    <path d="m6 8 4 4 4-4" />
+                  </svg>
+                </div>
+              </div>
+            ) : null}
             <div className="space-y-0.5">
               {group.items.map((item) => {
                 const active = item.href === "/demo/dashboard";
@@ -148,6 +154,9 @@ function Topbar() {
 }
 
 export default function DashboardPage() {
+  const { activeBusinessId } = useDemoFlow();
+  const activeBusiness = dashboardSeed.businesses.find((business) => business.id === activeBusinessId) ?? dashboardSeed.businesses[0];
+
   return (
     <div className="min-h-screen bg-canvas pb-[68px] lg:pb-0 lg:pl-[248px]">
       <Sidebar />
@@ -158,7 +167,7 @@ export default function DashboardPage() {
             <div>
               <p className="mb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-teal-700">Beranda usaha</p>
               <h1 className="text-[24px] font-bold tracking-[-0.025em] text-ink-900 sm:text-[28px]">Selamat pagi, {dashboardSeed.user.name}</h1>
-              <p className="mt-1 text-[13px] text-ink-500">Berikut hal terpenting untuk Kopi Senja hari ini.</p>
+              <p className="mt-1 text-[13px] text-ink-500">Berikut hal terpenting untuk {activeBusiness.name} hari ini.</p>
             </div>
             <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center gap-2 rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface transition-colors hover:bg-teal-600">
               <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M10 3v14M3 10h14" /></svg>
@@ -265,7 +274,7 @@ export default function DashboardPage() {
           <section aria-labelledby="history-title" className="mt-4 overflow-hidden rounded-[14px] border border-line bg-surface">
             <div className="flex flex-col gap-3 border-b border-line px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div><h2 id="history-title" className="text-[15px] font-bold text-ink-900">Analisis tersimpan</h2><p className="mt-0.5 text-[11px] text-ink-400">Bandingkan skenario lokasi secara sejajar</p></div>
-              <div className="flex items-center gap-2"><span className="rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[10px] font-semibold text-ink-500">{dashboardSeed.ruleVersion}</span><Link href="/demo/laporan" className="text-[11.5px] font-bold text-teal-700">Lihat semua</Link></div>
+              <div className="flex items-center gap-2"><span className="rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[10px] font-semibold text-ink-500">{dashboardSeed.ruleVersion}</span><Link href="/demo/analisis/riwayat" className="text-[11.5px] font-bold text-teal-700">Lihat semua</Link></div>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px] border-collapse text-left">

@@ -13,7 +13,7 @@ export const journeys = {
       { label: "Selesaikan modul edukasi", href: "/demo/edukasi" },
       { label: "Konfirmasi input", href: "/demo/analisis/konfirmasi" },
       { label: "Empat agent berjalan", href: "/demo/analisis/proses" },
-      { label: "Baca laporan", href: "/demo/laporan" },
+      { label: "Baca laporan", href: "/demo/laporan/RPT-2026-0087" },
     ],
     mulai: "/demo/analisis/input",
   },
@@ -39,7 +39,7 @@ export const stepsA = [
   { id: "edukasi", label: "Edukasi", href: "/demo/edukasi" },
   { id: "konfirmasi", label: "Konfirmasi", href: "/demo/analisis/konfirmasi" },
   { id: "proses", label: "Simulasi", href: "/demo/analisis/proses" },
-  { id: "laporan", label: "Laporan", href: "/demo/laporan" },
+  { id: "laporan", label: "Laporan", href: "/demo/laporan/RPT-2026-0087" },
   { id: "diskusi", label: "Diskusi", href: "/demo/diskusi" },
 ] as const;
 

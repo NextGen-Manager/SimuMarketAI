@@ -2,12 +2,23 @@
 
 import { usePathname } from "next/navigation";
 import { Header } from "./Header";
+import { WorkspaceShell } from "./WorkspaceShell";
 
 export function DemoChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   if (pathname === "/demo/dashboard") {
     return <>{children}</>;
+  }
+
+  const usesWorkspace =
+    pathname.startsWith("/demo/transaksi") ||
+    pathname.startsWith("/demo/laporan") ||
+    pathname === "/demo/edukasi" ||
+    pathname === "/demo/analisis/riwayat";
+
+  if (usesWorkspace) {
+    return <WorkspaceShell>{children}</WorkspaceShell>;
   }
 
   return (

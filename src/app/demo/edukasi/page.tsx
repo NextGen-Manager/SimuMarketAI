@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
-import { useAutoplay } from "@/demo/useAutoplay";
 import { modul, type Modul } from "@/demo/data/education";
 import { Button } from "@/components/ui/Button";
 import { Callout } from "@/components/ui/Metric";
@@ -14,8 +13,6 @@ export default function Edukasi() {
   const router = useRouter();
   const { modulSelesai, selesaikanModul, gerbangTerbuka, tandaiSelesai } =
     useDemoFlow();
-  useAutoplay();
-
   const [buka, setBuka] = useState<Modul | null>(null);
 
   if (buka) {

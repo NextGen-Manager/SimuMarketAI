@@ -19,6 +19,9 @@ type Ctx = {
   journey: JourneyId | null;
   pilihJourney: (j: JourneyId) => void;
 
+  activeBusinessId: string;
+  setActiveBusinessId: (id: string) => void;
+
   langkahSelesai: Set<string>;
   tandaiSelesai: (id: string) => void;
 
@@ -51,6 +54,7 @@ const DemoCtx = createContext<Ctx | null>(null);
 
 export function DemoFlowProvider({ children }: { children: ReactNode }) {
   const [journey, setJourney] = useState<JourneyId | null>(null);
+  const [activeBusinessId, setActiveBusinessId] = useState("kopi-senja");
   const [langkahSelesai, setLangkahSelesai] = useState<Set<string>>(new Set());
   const [profil, setProfil] = useState<Profil>(profilAwal);
   const [fieldDiubah, setFieldDiubah] = useState<Set<string>>(new Set());
@@ -111,6 +115,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
 
   const reset = useCallback(() => {
     setJourney(null);
+    setActiveBusinessId("kopi-senja");
     setLangkahSelesai(new Set());
     setProfil(profilAwal);
     setFieldDiubah(new Set());
@@ -126,6 +131,8 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     () => ({
       journey,
       pilihJourney,
+      activeBusinessId,
+      setActiveBusinessId,
       langkahSelesai,
       tandaiSelesai,
       profil,
@@ -150,6 +157,7 @@ export function DemoFlowProvider({ children }: { children: ReactNode }) {
     [
       journey,
       pilihJourney,
+      activeBusinessId,
       langkahSelesai,
       tandaiSelesai,
       profil,
