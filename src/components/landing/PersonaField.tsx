@@ -109,7 +109,7 @@ export function PersonaField({
               >
                 {p.id.slice(0, 2).toUpperCase()}
               </span>
-              <span className="pointer-events-none absolute left-1/2 top-full mt-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded-[5px] border border-white/15 bg-black/80 px-2 py-0.5 text-[10px] font-medium text-white/85 group-hover:block">
+              <span className="pointer-events-none absolute left-full top-1/2 ml-1.5 hidden -translate-y-1/2 whitespace-nowrap rounded-[5px] border border-white/15 bg-black/80 px-2 py-0.5 text-[10px] font-medium text-white/85 group-hover:block">
                 {p.id} · {arkeLabel[p.arke]}
               </span>
             </div>

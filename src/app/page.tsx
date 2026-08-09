@@ -2,8 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { JourneyPaths } from "@/components/landing/JourneyPaths";
+import { LandingStats } from "@/components/landing/LandingStats";
+import { ModuleFlow } from "@/components/landing/ModuleFlow";
 import { PersonaFieldAuto } from "@/components/landing/PersonaField";
+import { SceneReveal } from "@/components/landing/SceneReveal";
 import { SceneStack, type Scene } from "@/components/landing/SceneStack";
+import { ScoreShowcase } from "@/components/landing/ScoreShowcase";
 
 function Tombol({
   href,
@@ -41,7 +46,6 @@ function Bingkai({ children }: { children: React.ReactNode }) {
 
 export default function Landing() {
   const scenes: Scene[] = [
-    /* ── 1 · Pembuka ─────────────────────────────────────────── */
     {
       id: "buka",
       dasar: "#cfe4ee",
@@ -61,29 +65,28 @@ export default function Landing() {
           className="absolute inset-0 bg-[radial-gradient(ellipse_46%_58%_at_26%_44%,rgba(255,255,255,0.86),rgba(255,255,255,0.34)_52%,transparent_78%)]"
         />
       ),
-      isi: (
+      isi: (aktif: boolean) => (
         <Bingkai>
-          <div className="max-w-[30rem]">
+          <SceneReveal aktif={aktif} className="max-w-[29rem]">
+            <p className="label-eyebrow mb-5">SimuMarket AI · Jabodetabek</p>
             <h1 className="font-serif text-[46px] font-bold leading-[1.03] tracking-[-0.025em] text-ink-900 text-balance sm:text-[64px]">
-              Uji dulu.
+              Usaha F&B,
               <br />
-              Baru keluarkan modal.
+              lebih terukur.
             </h1>
-            <p className="mt-6 max-w-[26rem] text-[16.5px] leading-[1.6] text-ink-700">
-              Simulasi pasar untuk usaha makanan dan minuman di Jabodetabek.
+            <p className="mt-5 text-[17px] font-medium leading-relaxed text-ink-700">
+              Dari ide sampai penjualan.
             </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Tombol href="/demo" utama>
                 Coba Demo <span aria-hidden>→</span>
               </Tombol>
               <Tombol href="/login">Masuk</Tombol>
             </div>
-          </div>
+          </SceneReveal>
         </Bingkai>
       ),
     },
-
-    /* ── 2 · Masalah ─────────────────────────────────────────── */
     {
       id: "masalah",
       dasar: "var(--color-canvas)",
@@ -93,48 +96,57 @@ export default function Landing() {
           className="absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_70%_30%,var(--color-teal-50),transparent_72%)]"
         />
       ),
-      isi: (
+      isi: (aktif: boolean) => (
         <Bingkai>
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-            <div>
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
+            <SceneReveal aktif={aktif} className="max-w-[39rem]">
               <p className="label-eyebrow mb-6">Kenapa ini dibuat</p>
-              <h2 className="max-w-[16ch] font-serif text-[36px] font-bold leading-[1.1] tracking-[-0.02em] text-ink-900 text-balance sm:text-[52px]">
-                Paling banyak dicoba, paling sering ditebak.
+              <h2 className="max-w-[17ch] font-serif text-[36px] font-bold leading-[1.1] tracking-[-0.02em] text-ink-900 text-balance sm:text-[52px]">
+                Usaha F&B terus bertambah. Tapi keputusan bisnis belum selalu
+                berbasis data.
               </h2>
-              <p className="mt-7 max-w-[38ch] text-[17px] leading-[1.65] text-ink-500">
-                Modalnya terjangkau, jadi banyak yang masuk. Yang jarang ada
-                justru bagian penentunya: seberapa padat pesaing di titik itu,
-                dan berapa lama modal kembali.
+              <p className="mt-6 max-w-[42ch] text-[16.5px] leading-[1.65] text-ink-500">
+                Lokasi, harga, dan strategi sering ditentukan dengan informasi
+                terbatas. Pencatatan transaksi pun belum selalu berubah menjadi
+                insight yang bisa digunakan.
               </p>
-            </div>
+            </SceneReveal>
 
-            <dl className="grid gap-px overflow-hidden rounded-[16px] border border-line bg-line">
-              {[
-                { a: "4,85 juta", b: "usaha makanan dan minuman", c: "BPS, 2023" },
-                { a: "21,13%", b: "pertumbuhan sejak 2016", c: "BPS, 2024" },
-                { a: "99,5%", b: "nilai penjualan dari UKM", c: "BPS, 2024" },
-              ].map((s) => (
-                <div key={s.a} className="bg-surface px-6 py-5">
-                  <dt className="tnum font-serif text-[32px] font-bold leading-none text-ink-900">
-                    {s.a}
-                  </dt>
-                  <dd className="mt-2 text-[14.5px] text-ink-500">
-                    {s.b}
-                    <span className="ml-2 font-mono text-[11.5px] text-ink-400">
-                      {s.c}
-                    </span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <LandingStats aktif={aktif} />
           </div>
         </Bingkai>
       ),
     },
-
-    /* ── 3 · Simulasi ────────────────────────────────────────── */
     {
-      id: "simulasi",
+      id: "modul",
+      dasar: "var(--color-surface)",
+      latar: (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_28%_50%,var(--color-amber-50),transparent_70%)]"
+        />
+      ),
+      isi: (aktif: boolean) => (
+        <Bingkai>
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:gap-16">
+            <SceneReveal aktif={aktif} className="max-w-[27rem]">
+              <p className="label-eyebrow mb-6">Satu platform</p>
+              <h2 className="font-serif text-[36px] font-bold leading-[1.08] tracking-[-0.02em] text-ink-900 text-balance sm:text-[50px]">
+                Dari sebelum usaha dibuka sampai setelah berjalan.
+              </h2>
+              <p className="mt-6 text-[16.5px] leading-[1.65] text-ink-500">
+                Satu alur untuk memahami pasar, membangun fondasi bisnis, dan
+                membaca penjualan nyata.
+              </p>
+            </SceneReveal>
+
+            <ModuleFlow aktif={aktif} />
+          </div>
+        </Bingkai>
+      ),
+    },
+    {
+      id: "alur",
       dasar: "var(--color-ink-900)",
       latar: (
         <div
@@ -149,79 +161,39 @@ export default function Landing() {
       hias: (
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_44%_38%_at_50%_50%,rgba(26,136,145,0.16),rgba(26,136,145,0.06)_45%,transparent_72%)]"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_50%_55%_at_70%_45%,rgba(26,136,145,0.17),rgba(26,136,145,0.04)_48%,transparent_76%)]"
         />
       ),
       isi: (aktif: boolean) => (
         <Bingkai>
-          <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
             <div>
-              <p className="mb-5 font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-teal-500">
-                Di dalam simulasi
-              </p>
-              <h2 className="max-w-[15ch] font-serif text-[36px] font-bold leading-[1.08] tracking-[-0.02em] text-white text-balance sm:text-[52px]">
-                Mereka tidak sepakat. Itu gunanya.
-              </h2>
-              <p className="mt-7 max-w-[38ch] text-[17px] leading-[1.65] text-white/60">
-                Enam belas pelanggan sintetis menilai sendiri, lalu saling
-                menantang, lalu diwawancarai. Perbedaannya disimpan — bukan
-                dirata-ratakan sampai hilang.
-              </p>
+              <SceneReveal aktif={aktif}>
+                <p className="mb-5 font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-teal-500">
+                  Sesuai tahap usaha
+                </p>
+                <h2 className="max-w-[16ch] font-serif text-[36px] font-bold leading-[1.08] tracking-[-0.02em] text-white text-balance sm:text-[50px]">
+                  Mulai dari mana pun usahamu.
+                </h2>
+                <p className="mt-6 max-w-[38ch] text-[16.5px] leading-[1.65] text-white/60">
+                  Calon pengusaha dan pemilik usaha berjalan mendapat jalur yang
+                  berbeda, tetapi sama-sama berakhir pada keputusan yang lebih
+                  terukur.
+                </p>
+              </SceneReveal>
+
+              <div className="mt-7">
+                <JourneyPaths aktif={aktif} />
+              </div>
             </div>
+
             <PersonaFieldAuto aktif={aktif} />
           </div>
         </Bingkai>
       ),
     },
-
-    /* ── 4 · Angka ───────────────────────────────────────────── */
     {
-      id: "angka",
-      dasar: "var(--color-surface)",
-      latar: (
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_28%_50%,var(--color-amber-50),transparent_70%)]"
-        />
-      ),
-      isi: (
-        <Bingkai>
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-            <div className="rounded-[18px] border border-line bg-surface p-8 text-center">
-              <p className="label-eyebrow mb-4">Launch Readiness Score</p>
-              <p className="tnum font-serif text-[84px] font-bold leading-none text-amber-600">
-                68
-              </p>
-              <p className="mt-1 text-[13px] font-medium text-ink-400">
-                dari 100
-              </p>
-              <p className="mt-5 inline-block rounded-full border border-warn-600/30 bg-warn-50 px-3.5 py-1.5 text-[13px] font-semibold text-warn-600">
-                Layak dengan mitigasi
-              </p>
-            </div>
-
-            <div>
-              <h2 className="max-w-[17ch] font-serif text-[34px] font-bold leading-[1.1] tracking-[-0.02em] text-ink-900 text-balance sm:text-[48px]">
-                Angkanya dihitung kode, bukan dikarang.
-              </h2>
-              <p className="mt-7 max-w-[40ch] text-[17px] leading-[1.65] text-ink-500">
-                Titik impas, marjin, dan payback berasal dari rumus yang bisa
-                dibuka dan diuji ulang. Agen boleh mengkritik asumsinya — tidak
-                boleh menuliskan angkanya.
-              </p>
-              <p className="mt-6 max-w-[40ch] text-[15px] leading-relaxed text-ink-400">
-                Setiap angka membawa sumber, waktu pengambilan, dan tingkat
-                keyakinannya.
-              </p>
-            </div>
-          </div>
-        </Bingkai>
-      ),
-    },
-
-    /* ── 5 · Ajakan ──────────────────────────────────────────── */
-    {
-      id: "mulai",
+      id: "hasil",
       dasar: "var(--color-ink-900)",
       latar: (
         <Image
@@ -233,27 +205,35 @@ export default function Landing() {
         />
       ),
       hias: <div aria-hidden className="absolute inset-0 bg-ink-900/70" />,
-      isi: (
+      isi: (aktif: boolean) => (
         <Bingkai>
-          <div className="mx-auto max-w-[34rem] text-center">
-            <h2 className="font-serif text-[38px] font-bold leading-[1.08] tracking-[-0.02em] text-white text-balance sm:text-[54px]">
-              Lihat alurnya dari ujung ke ujung.
-            </h2>
-            <p className="mx-auto mt-6 max-w-[30rem] text-[16.5px] leading-relaxed text-white/60">
-              Dua alur tersedia: calon pengusaha, dan pemilik usaha yang sudah
-              berjalan.
-            </p>
-            <div className="mt-9 flex flex-wrap justify-center gap-3">
-              <Tombol href="/demo" utama terang>
-                Coba Demo <span aria-hidden>→</span>
-              </Tombol>
-              <Tombol href="/login" terang>
-                Masuk
-              </Tombol>
-            </div>
-            <p className="mt-12 text-[12.5px] text-white/35">
-              © 2026 NextGen Managers · Universitas Indonesia
-            </p>
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16">
+            <ScoreShowcase aktif={aktif} />
+
+            <SceneReveal aktif={aktif} delay={180} className="max-w-[34rem]">
+              <p className="mb-5 font-mono text-[11.5px] font-semibold uppercase tracking-[0.16em] text-teal-500">
+                Hasil yang dapat dibaca
+              </p>
+              <h2 className="font-serif text-[36px] font-bold leading-[1.08] tracking-[-0.02em] text-white text-balance sm:text-[50px]">
+                Tahu bukan hanya skornya, tetapi kenapa.
+              </h2>
+              <p className="mt-6 text-[16.5px] leading-[1.65] text-white/60">
+                Lihat alasan, sumber, tingkat keyakinan, risiko, dan langkah
+                berikutnya. Hasilnya membantu pertimbangan—bukan menjanjikan
+                keberhasilan.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Tombol href="/demo" utama terang>
+                  Coba Demo <span aria-hidden>→</span>
+                </Tombol>
+                <Tombol href="/login" terang>
+                  Masuk
+                </Tombol>
+              </div>
+              <p className="mt-12 text-[12.5px] text-white/35">
+                © 2026 NextGen Managers · Universitas Indonesia
+              </p>
+            </SceneReveal>
           </div>
         </Bingkai>
       ),
