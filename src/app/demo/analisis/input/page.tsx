@@ -302,7 +302,7 @@ export default function InputAnalisis() {
               <Callout tone="danger">
                 Biaya operasional belum diisi. Simulasi tetap bisa dijalankan,
                 tetapi titik impas akan tampil sebagai rentang dan dimensi{" "}
-                <em>Kesiapan Operasional</em> (bobot 20%) tidak dapat diskor.
+                <em>Kesiapan Operasional</em> (bobot 40%) tidak dapat diskor.
               </Callout>
             ) : null}
           </div>

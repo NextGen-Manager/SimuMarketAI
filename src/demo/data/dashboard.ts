@@ -86,9 +86,9 @@ export const dashboardSeed = {
     next: "Mengelola bahan baku dan pemasok",
   },
   analyses: [
-    { id: "AN-003", name: "Kopi Senja", area: "Tebet", score: 68, interpretation: "Layak dengan mitigasi", date: "6 Agu 2026" },
+    { id: "AN-003", name: "Kopi Senja", area: "Tebet", score: 66, interpretation: "Layak dengan mitigasi", date: "11 Agu 2026" },
     { id: "AN-002", name: "Kopi Senja", area: "Bekasi Selatan", score: 71, interpretation: "Layak dengan mitigasi", date: "2 Agu 2026" },
     { id: "AN-001", name: "Kopi Senja", area: "Depok", score: 54, interpretation: "Perlu validasi", date: "29 Jul 2026" },
   ],
-  ruleVersion: "lrs-v0.1-unvalidated",
+  ruleVersion: "lrs-v0.2-unvalidated",
 } as const;

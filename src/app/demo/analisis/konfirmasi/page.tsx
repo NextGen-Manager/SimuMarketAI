@@ -247,7 +247,7 @@ export default function Konfirmasi() {
               2 dari 3 input finansial wajib terisi.
             </strong>{" "}
             Tanpa biaya operasional bulanan, titik impas akan tampil sebagai
-            rentang, dan dimensi <em>Kesiapan Operasional</em> (bobot 20%) tidak
+            rentang, dan dimensi <em>Kesiapan Operasional</em> (bobot 40%) tidak
             dapat diskor. Simulasi tetap bisa dijalankan.
           </Callout>
         ) : (

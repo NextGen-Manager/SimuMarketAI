@@ -5,15 +5,15 @@ export const laporan = {
     "Laporan kesiapan peluncuran berdasarkan parameter pasar saat ini dan data historis performa produk serupa. Skor menunjukkan produk memiliki peluang pasar yang baik, namun terdapat risiko operasional dan finansial yang perlu dimitigasi sebelum peluncuran penuh.",
 
   skor: {
-    nilai: 68,
+    nilai: 66,
     interpretasi: "Layak dengan mitigasi",
-    ruleVersion: "lrs-v0.1-unvalidated",
+    ruleVersion: "lrs-v0.2-unvalidated",
     catatanVersi: "Bobot belum divalidasi ahli",
     dimensi: [
-      { nama: "Saturasi Pasar", bobot: 30, nilai: 62 },
+      { nama: "Saturasi Pasar", bobot: 20, nilai: 62 },
       { nama: "Potensi Permintaan", bobot: 25, nilai: 71 },
-      { nama: "Posisi Harga", bobot: 25, nilai: 74 },
-      { nama: "Kesiapan Operasional", bobot: 20, nilai: 63 },
+      { nama: "Posisi Harga", bobot: 15, nilai: 74 },
+      { nama: "Kesiapan Operasional", bobot: 40, nilai: 63 },
     ],
   },
 
