@@ -5,7 +5,7 @@ import type { Langkah } from "./data/simulation";
 
 /**
  * Pemutar skrip simulasi. Satu timer per langkah, memakai `ms` masing-masing.
- * Tidak ada perhitungan apa pun di sini — hanya memajukan indeks.
+ * Tidak ada perhitungan apa pun di sini, hanya memajukan indeks.
  */
 export function usePlayback(skrip: Langkah[], jalan = true) {
   const [indeks, setIndeks] = useState(0);

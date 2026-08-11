@@ -108,7 +108,7 @@ export default function InputAnalisis() {
       </div>
 
       <div className="rounded-[12px] border border-line bg-surface p-6">
-        {/* 1 — Lokasi lewat peta */}
+        {/* 1. Lokasi lewat peta */}
         {langkah === 0 ? (
           <div className="space-y-4">
             <MapPicker
@@ -129,7 +129,7 @@ export default function InputAnalisis() {
           </div>
         ) : null}
 
-        {/* 2 — Produk yang akan dijual */}
+        {/* 2. Produk yang akan dijual */}
         {langkah === 1 ? (
           <div className="space-y-5">
             <div>
@@ -137,7 +137,7 @@ export default function InputAnalisis() {
                 Produk yang akan dijual
               </h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-ink-500">
-                Menu dan harganya ikut dianalisis — bukan hanya lokasi. Persona
+                Menu dan harganya ikut dianalisis, bukan hanya lokasi. Persona
                 akan menilai harga tiap produk, bukan satu harga rata-rata.
               </p>
             </div>
@@ -210,7 +210,7 @@ export default function InputAnalisis() {
           </div>
         ) : null}
 
-        {/* 3 — Modal dan biaya operasional */}
+        {/* 3. Modal dan biaya operasional */}
         {langkah === 2 ? (
           <div className="space-y-5">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -264,7 +264,7 @@ export default function InputAnalisis() {
               </ul>
               <p className="mt-2.5 text-[12px] leading-relaxed text-ink-400">
                 Rentang ini estimasi berbasis rata-rata area terpilih, bukan
-                kuotasi. Isi angka sebenarnya bila sudah punya — prediksi tidak
+                kuotasi. Isi angka sebenarnya bila sudah punya. Prediksi tidak
                 dipakai menghitung skor.
               </p>
               <Button
@@ -302,7 +302,7 @@ export default function InputAnalisis() {
               <Callout tone="danger">
                 Biaya operasional belum diisi. Simulasi tetap bisa dijalankan,
                 tetapi titik impas akan tampil sebagai rentang dan dimensi{" "}
-                <em>Kesiapan Operasional</em> (bobot 20%) tidak dapat diskor.
+                <em>Kesiapan Operasional</em> (bobot 40%) tidak dapat diskor.
               </Callout>
             ) : null}
           </div>

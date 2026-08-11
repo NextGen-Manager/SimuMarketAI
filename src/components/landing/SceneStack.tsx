@@ -5,9 +5,9 @@ import { cn } from "@/lib/format";
 
 export type Scene = {
   id: string;
-  /** Lapis terjauh — bergerak paling lambat. */
+  /** Lapis terjauh bergerak paling lambat. */
   latar: ReactNode;
-  /** Lapis hias di atas latar — bergerak lebih cepat. */
+  /** Lapis hias di atas latar bergerak lebih cepat. */
   hias?: ReactNode;
   /** Boleh berupa fungsi agar isinya tahu kapan adegannya aktif. */
   isi: ReactNode | ((aktif: boolean) => ReactNode);
@@ -115,7 +115,7 @@ export function SceneStack({ scenes }: { scenes: Scene[] }) {
           { yPercent: maju ? 0 : 16, opacity: maju ? 1 : 0, ease: "power2.out" },
           maju ? 0.22 : 0,
         )
-        // Adegan yang ditutupi hanya hanyut sedikit — memberi kedalaman.
+        // Adegan yang ditutupi hanya hanyut sedikit untuk memberi kedalaman.
         .fromTo(
           diamLatar,
           { yPercent: maju ? 0 : -6 },

@@ -24,7 +24,7 @@ function Avatar({ aktivitas }: { aktivitas: Aktivitas }) {
 }
 
 /**
- * Tidak semua action layak jadi kartu penuh — kalau tidak, feed jadi derau.
+ * Tidak semua action layak jadi kartu penuh karena feed dapat menjadi derau.
  * Bentuk per jenis mengikuti tabel di dokumen 13.
  */
 export function AgentCard({
@@ -64,7 +64,7 @@ export function AgentCard({
     );
   }
 
-  // Satu-satunya action yang diberi warna — sinyal terpenting.
+  // Satu-satunya action yang diberi warna sebagai sinyal terpenting.
   if (aktivitas.jenis === "purchase") {
     return (
       <div className="animate-feed-in flex items-center gap-2.5 rounded-[8px] border border-amber-600/30 bg-amber-50 px-3 py-2 text-[13px]">

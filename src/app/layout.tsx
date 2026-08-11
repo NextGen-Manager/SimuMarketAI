@@ -1,16 +1,11 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Source_Serif_4 } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-jakarta",
-  display: "swap",
-});
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-source-serif",
+  style: ["normal", "italic"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -31,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" className={`${jakarta.variable} ${sourceSerif.variable}`}>
+    <html lang="id" className={montserrat.variable}>
       <body className="min-h-screen antialiased">{children}</body>
     </html>
   );

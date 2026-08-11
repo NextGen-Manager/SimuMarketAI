@@ -32,7 +32,7 @@ export default function Edukasi() {
             <strong className="font-semibold text-ink-900">
               Market Analysis masih terkunci.
             </strong>{" "}
-            Ini gerbang keras, bukan peringatan — tombol lanjut baru aktif
+            Ini gerbang keras, bukan peringatan. Tombol lanjut baru aktif
             setelah kedua topik wajib selesai. Tujuannya agar kamu bisa
             mengkritisi hasil AI, bukan sekadar menerimanya.
           </Callout>
@@ -242,7 +242,7 @@ function BacaModul({ m, tutup }: { m: Modul; tutup: () => void }) {
               </span>
             ) : (
               <span className="text-[13.5px] font-semibold text-danger-600">
-                Masih ada yang keliru — periksa lagi
+                Masih ada yang keliru. Periksa lagi
               </span>
             )
           ) : null}

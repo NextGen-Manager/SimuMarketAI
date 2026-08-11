@@ -10,13 +10,13 @@ const idr = new Intl.NumberFormat("id-ID", {
 
 /** Uang selalu integer rupiah. */
 export function formatIDR(value: number | null | undefined): string {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) return "Tidak tersedia";
   return `Rp ${idr.format(value)}`;
 }
 
 /** Bentuk ringkas untuk kartu metrik: Rp 18,5 jt */
 export function formatIDRShort(value: number | null | undefined): string {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) return "Tidak tersedia";
   if (value >= 1_000_000_000) {
     return `Rp ${(value / 1_000_000_000).toLocaleString("id-ID", {
       maximumFractionDigits: 1,

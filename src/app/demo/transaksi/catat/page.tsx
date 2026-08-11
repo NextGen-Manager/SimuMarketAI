@@ -104,7 +104,7 @@ export default function CatatTransaksi() {
               >
                 {business.products.map((product) => (
                   <option key={product.id} value={product.id}>
-                    {product.name} — {formatIDR(product.sellingPriceIdr)}
+                    {product.name}, {formatIDR(product.sellingPriceIdr)}
                   </option>
                 ))}
               </select>
@@ -156,8 +156,8 @@ export default function CatatTransaksi() {
               className="font-semibold text-teal-700 underline underline-offset-2"
             >
               Foto struknya
-            </Link>{" "}
-            — hasil pembacaan tetap kamu koreksi sebelum disimpan.
+            </Link>
+            . Hasil pembacaan tetap kamu koreksi sebelum disimpan.
           </p>
         </div>
 

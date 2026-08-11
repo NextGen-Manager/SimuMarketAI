@@ -69,7 +69,7 @@ export function AgentStrip({
             </div>
             <p className="mt-1 text-[11.5px] text-ink-400">
               {gagalIni
-                ? "gagal — timeout"
+                ? "gagal karena timeout"
                 : aktif
                   ? "sedang bekerja"
                   : n > 0

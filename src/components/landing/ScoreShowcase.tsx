@@ -22,11 +22,11 @@ export function ScoreShowcase({ aktif }: { aktif: boolean }) {
         </div>
 
         <div className="mt-2 flex justify-center">
-          <ScoreGauge nilai={68} interpretasi="Layak dengan mitigasi" ukuran={220} />
+          <ScoreGauge nilai={66} interpretasi="Layak dengan mitigasi" ukuran={220} />
         </div>
 
         <p className="mt-1 text-center font-mono text-[10.5px] text-white/35">
-          Aturan contoh · lrs-v0.1-unvalidated · bukan hasil analisis nyata
+          Aturan contoh · lrs-v0.2-unvalidated · bukan hasil analisis nyata
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/10 pt-4">

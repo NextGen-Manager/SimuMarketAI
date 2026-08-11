@@ -219,7 +219,7 @@ export default function Landing() {
               </h2>
               <p className="mt-6 text-[16.5px] leading-[1.65] text-white/60">
                 Lihat alasan, sumber, tingkat keyakinan, risiko, dan langkah
-                berikutnya. Hasilnya membantu pertimbangan—bukan menjanjikan
+                berikutnya. Hasilnya membantu pertimbangan, bukan menjanjikan
                 keberhasilan.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">

@@ -200,7 +200,7 @@ export default function Diskusi() {
                         ))}
                       </div>
 
-                      {/* Atribusi tool call — angka tanpa ini tidak dirender */}
+                      {/* Atribusi tool call; angka tanpa ini tidak dirender */}
                       {g.jawab!.toolCall ? (
                         <p className="mt-3 border-t border-line pt-2.5 font-mono text-[11.5px] text-ink-500">
                           <span className="text-teal-700">⌘</span> dihitung oleh{" "}

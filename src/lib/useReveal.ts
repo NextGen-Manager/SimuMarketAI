@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Reveal saat elemen masuk viewport. Memakai IntersectionObserver, tanpa
- * pustaka animasi — halaman ini tidak butuh timeline, hanya pemicu.
+ * pustaka animasi. Halaman ini tidak butuh timeline, hanya pemicu.
  */
 export function useReveal<T extends HTMLElement = HTMLDivElement>(
   ambang = 0.25,

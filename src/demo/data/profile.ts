@@ -17,7 +17,7 @@ export const profilAwal = {
   ringkasanUsaha: {
     status: "terdeteksi" as FieldStatus,
     namaIde: "Kopi Kenangan Senja",
-    jenisBisnis: "F&B — Kedai Kopi Spesialti",
+    jenisBisnis: "F&B, Kedai Kopi Spesialti",
     deskripsi:
       "Kedai kopi berkonsep modern minimalis yang menyajikan biji kopi lokal Nusantara dengan teknik seduh manual dan mesin espresso standar industri. Fokus pada pengalaman pelanggan dan suasana kerja yang nyaman.",
     usp: "Menggunakan 100% biji kopi petani lokal dengan sistem fair-trade, serta menawarkan kelas seduh kopi mingguan untuk pelanggan.",
@@ -25,7 +25,7 @@ export const profilAwal = {
   targetPelanggan: {
     status: "perlu-dikonfirmasi" as FieldStatus,
     segmen: "Mahasiswa & Pekerja Lepas",
-    lokasi: "Jakarta Selatan — Tebet (radius 1,5 km)",
+    lokasi: "Tebet, Jakarta Selatan (radius 1,5 km)",
     kebiasaan:
       "Mencari tempat dengan WiFi cepat, colokan banyak, dan harga kopi di bawah Rp 35.000.",
   },
@@ -55,7 +55,7 @@ export const profilAwal = {
   asumsiFinansial: {
     status: "perlu-dilengkapi" as FieldStatus,
     modalAwal: 150_000_000,
-    /** Sengaja kosong — memicu blok kesiapan data dan menurunkan confidence. */
+    /** Sengaja kosong untuk memicu blok kesiapan data dan menurunkan confidence. */
     biayaOperasionalBulanan: null as number | null,
     hppPerCup: 8_500,
     targetHarian: "50 – 70 cup",

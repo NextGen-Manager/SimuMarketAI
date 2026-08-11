@@ -48,7 +48,7 @@ export function DemoChrome({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
       <footer className="mt-20 border-t border-line bg-surface">
         <div className="mx-auto flex max-w-[1200px] flex-col gap-3 px-6 py-8 text-[12.5px] text-ink-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 SimuMarket AI — Solusi Cerdas UMKM.</p>
+          <p>© 2026 SimuMarket AI. Solusi Cerdas UMKM.</p>
           <p className="max-w-[46ch]">
             Seluruh data pada demo ini adalah contoh, bukan hasil analisis nyata.
           </p>
