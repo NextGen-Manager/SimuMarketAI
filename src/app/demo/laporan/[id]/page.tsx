@@ -47,7 +47,7 @@ export default function Laporan() {
   }, [tandaiSelesai]);
 
   /**
-   * Varian dibaca dari context, bukan useSearchParams — pemakaian hook itu
+   * Varian dibaca dari context, bukan useSearchParams. Pemakaian hook itu
    * membuat Next melewatkan prerender seluruh halaman sehingga laporan
    * sempat berkedip kosong. URL `?hasil=parsial` tetap didukung lewat efek ini.
    */
@@ -108,7 +108,7 @@ export default function Laporan() {
         </div>
       ) : null}
 
-      {/* 01 Skor — gauge sesuai proposal §7.4 */}
+      {/* 01 Skor, gauge sesuai proposal §7.4 */}
       <Bagian no="01" judul="Launch Readiness Score">
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-center sm:gap-8">
           <ScoreGauge
@@ -155,7 +155,7 @@ export default function Laporan() {
         </div>
       </Bagian>
 
-      {/* 02 Evidence Confidence — wajib, tidak boleh collapsed */}
+      {/* 02 Evidence Confidence wajib dan tidak boleh collapsed */}
       <Bagian
         no="02"
         judul="Evidence Confidence"
@@ -227,7 +227,7 @@ export default function Laporan() {
         </div>
       </Bagian>
 
-      {/* 05 Penilaian per produk — Journey A menilai menu, bukan hanya lokasi */}
+      {/* 05 Penilaian per produk; Journey A menilai menu, bukan hanya lokasi */}
       <Bagian
         no="05"
         judul="Penilaian per Produk"
@@ -267,7 +267,7 @@ export default function Laporan() {
                       {formatIDR(p.harga)}
                     </td>
                     <td className="tnum px-4 py-2.5 text-right text-ink-700">
-                      {marjin === null ? "—" : `${marjin}%`}
+                      {marjin === null ? "Tidak tersedia" : `${marjin}%`}
                     </td>
                     <td className="px-4 py-2.5 text-ink-500">
                       {catatan[i % catatan.length]}
@@ -395,7 +395,7 @@ export default function Laporan() {
         </ul>
       </Bagian>
 
-      {/* 08 Bukti — wajib, tidak boleh collapsed */}
+      {/* 08 Bukti wajib dan tidak boleh collapsed */}
       <Bagian no="09" judul="Bukti & Keterbatasan">
         <div className="overflow-x-auto rounded-[10px] border border-line">
           <table className="w-full text-[13px]">

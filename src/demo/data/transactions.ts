@@ -27,7 +27,7 @@ export const AMBANG_HARI = 7;
 export const MIN_EXPOSURE = 5;
 export const hariTercatatAwal = 5;
 
-/** Riwayat mingguan — pengguna bisa membuka minggu mana pun. */
+/** Riwayat mingguan; pengguna bisa membuka minggu mana pun. */
 export type Minggu = {
   id: string;
   label: string;
@@ -108,7 +108,7 @@ export function ringkasProduk(m: Minggu) {
   });
 }
 
-/** Insight rule-based deterministik — bukan keluaran model bahasa. */
+/** Insight rule-based deterministik, bukan keluaran model bahasa. */
 export const insightPerMinggu: Record<
   string,
   { judul: string; isi: string; aksi: string; window: string }[]
@@ -122,7 +122,7 @@ export const insightPerMinggu: Record<
     },
     {
       judul: "Brownies Fudge nyaris tidak bergerak",
-      isi: "Terjual 7 porsi sepanjang minggu — di bawah ambang exposure minimum, jadi belum bisa disebut produk terendah.",
+      isi: "Terjual 7 porsi sepanjang minggu. Angka ini di bawah ambang exposure minimum, jadi belum bisa disebut produk terendah.",
       aksi: "Kumpulkan data satu minggu lagi sebelum mengambil keputusan.",
       window: "Observation window: 7 hari · exposure di bawah minimum",
     },
@@ -199,7 +199,7 @@ export const rekomendasiAI: Record<
   ],
 };
 
-/** Draft hasil OCR foto struk — selalu draft, tidak pernah transaksi final. */
+/** Draft hasil OCR foto struk selalu draft, tidak pernah transaksi final. */
 export const strukDraft = {
   merchant: { nilai: "Kedai Kopi Senja", confidence: 0.94 },
   tanggal: { nilai: "5 Agustus 2026, 12:10", confidence: 0.81 },

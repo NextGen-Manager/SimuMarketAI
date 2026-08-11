@@ -204,7 +204,7 @@ export default function Simulasi() {
             </div>
           </div>
 
-          {/* Strip empat agent — proposal §7.3 */}
+          {/* Strip empat agent sesuai proposal §7.3 */}
           <div className="mb-4">
             <AgentStrip
               aktivitas={aktivitas}
@@ -335,7 +335,7 @@ function CouncilPanel({ items }: { items: Langkah[] }) {
             Klaim #{klaim} ·{" "}
             {g.induk?.aktivitas
               ? councilMeta[g.induk.aktivitas.council].nama
-              : "—"}
+              : "Tidak tersedia"}
           </div>
           {g.induk ? (
             <AgentCard aktivitas={g.induk.aktivitas!} waktu={0} />

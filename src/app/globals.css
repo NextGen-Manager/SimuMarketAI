@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Ink — teks dan garis */
+  /* Ink: teks dan garis */
   --color-ink-900: #101413;
   --color-ink-700: #2e3634;
   --color-ink-500: #5c6663;
@@ -24,7 +24,7 @@
   --color-amber-600: #d4610a;
   --color-amber-50: #fdf1e7;
 
-  /* Semantik — hanya status, tidak pernah dekorasi */
+  /* Semantik: hanya status, tidak pernah dekorasi */
   --color-success-600: #1b7a4b;
   --color-success-50: #e9f5ee;
   --color-info-600: #2a6ba8;
@@ -34,8 +34,8 @@
   --color-danger-600: #b3261e;
   --color-danger-50: #fceded;
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), Georgia, serif;
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --radius-sm: 8px;
@@ -54,7 +54,7 @@
     font-family: var(--font-sans);
   }
 
-  /* Fokus selalu terlihat — outline:none dilarang tanpa pengganti setara */
+  /* Fokus selalu terlihat; outline:none dilarang tanpa pengganti setara */
   :focus-visible {
     outline: 2px solid var(--color-teal-500);
     outline-offset: 2px;

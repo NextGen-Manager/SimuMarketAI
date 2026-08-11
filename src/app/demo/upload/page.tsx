@@ -39,7 +39,7 @@ export default function Upload() {
             Seret berkas ke sini, atau pilih dari perangkat
           </p>
           <p className="mt-1.5 text-[13px] text-ink-400">
-            PDF, DOCX, MD, TXT, atau foto — maksimum 10 MB per berkas
+            PDF, DOCX, MD, TXT, atau foto dengan maksimum 10 MB per berkas
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button onClick={() => setTerunggah(true)}>Pakai dokumen contoh</Button>

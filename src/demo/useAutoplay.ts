@@ -9,7 +9,7 @@ type Adegan = { rute: string; tahanMs: number; tungguSelesai?: boolean };
 
 /**
  * Durasi tidak dibatasi. Layar yang punya proses sendiri (simulasi) memakai
- * `tungguSelesai` — autoplay menunggu sinyal selesai, bukan timer tetap.
+ * `tungguSelesai`: autoplay menunggu sinyal selesai, bukan timer tetap.
  */
 export const adeganA: Adegan[] = [
   { rute: "/demo/dashboard", tahanMs: 3000 },

@@ -1,7 +1,7 @@
 /**
  * Gauge 0–100 sesuai proposal §7.4. Setengah lingkaran, satu warna tetap.
  * Warna tidak digradasikan merah→hijau supaya skor tinggi tidak terbaca
- * sebagai "aman" — posisi jarum dan label interpretasi yang membawa makna.
+ * sebagai "aman". Posisi jarum dan label interpretasi yang membawa makna.
  */
 export function ScoreGauge({
   nilai,

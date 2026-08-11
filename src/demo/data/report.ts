@@ -134,7 +134,7 @@ export const laporan = {
 
   keterbatasan: [
     "Sinyal persona adalah respons sintetis, bukan hasil survei pelanggan nyata, dan belum dikalibrasi terhadap wawancara manusia.",
-    "Sampel harga pembanding hanya 4 observasi — di bawah ambang kecukupan sampel.",
+    "Sampel harga pembanding hanya 4 observasi, di bawah ambang kecukupan sampel.",
     "Bobot skor berstatus hipotesis dan belum ditinjau ahli.",
     "Data traffic pejalan kaki tidak tersedia sehingga dikeluarkan dari perhitungan.",
   ],

@@ -175,7 +175,7 @@ export const businessReceiptSeeds = {
 export const analysisHistorySeed = [
   {
     id: "AN-003",
-    name: "Kopi Senja — Tebet",
+    name: "Kopi Senja, Tebet",
     area: "Tebet, Jakarta Selatan",
     businessType: "Kedai kopi spesialti",
     score: 66,
@@ -189,7 +189,7 @@ export const analysisHistorySeed = [
   },
   {
     id: "AN-002",
-    name: "Kopi Senja — Bekasi Selatan",
+    name: "Kopi Senja, Bekasi Selatan",
     area: "Pekayon, Bekasi Selatan",
     businessType: "Kedai kopi spesialti",
     score: 71,
@@ -203,7 +203,7 @@ export const analysisHistorySeed = [
   },
   {
     id: "AN-001",
-    name: "Kopi Senja — Depok",
+    name: "Kopi Senja, Depok",
     area: "Margonda, Depok",
     businessType: "Kedai kopi spesialti",
     score: 54,
@@ -217,7 +217,7 @@ export const analysisHistorySeed = [
   },
   {
     id: "AN-000",
-    name: "Dapur Rasa — Beji",
+    name: "Dapur Rasa, Beji",
     area: "Beji, Depok",
     businessType: "Warung makan",
     score: 63,

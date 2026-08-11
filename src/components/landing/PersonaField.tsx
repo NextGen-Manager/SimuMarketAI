@@ -29,7 +29,7 @@ const arkeLabel: Record<Arke, string> = {
   social: "sosial",
 };
 
-/** 16 persona — ukuran cohort yang dipakai protokol simulasi. */
+/** 16 persona adalah ukuran cohort yang dipakai protokol simulasi. */
 export const kohort: Persona[] = [
   { id: "bd-01", arke: "budget", x: 8, y: 18, putusan: 2 },
   { id: "bd-02", arke: "budget", x: 26, y: 62, putusan: 1 },
@@ -54,7 +54,7 @@ const kolomLabel = ["Minat", "Pertimbangkan", "Tolak"];
 /**
  * Kohort persona sebagai visual utama. Tiga fase:
  * 0 berkumpul acak, 1 berdebat (bergetar halus), 2 terbelah jadi distribusi.
- * Ini bukan ilustrasi hiasan — bentuknya persis yang dijalankan produk.
+ * Ini bukan ilustrasi hiasan. Bentuknya persis yang dijalankan produk.
  */
 export function PersonaField({
   fase,

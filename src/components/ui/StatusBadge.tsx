@@ -28,7 +28,7 @@ const config: Record<
   "tidak-tersedia": {
     label: "Tidak tersedia",
     className: "bg-warn-50 text-warn-600 border-warn-600/25",
-    icon: "—",
+    icon: "!",
   },
 };
 
