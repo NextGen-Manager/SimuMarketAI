@@ -23,15 +23,11 @@ const modules = [
 ] as const;
 
 export function ModuleFlow({ aktif }: { aktif: boolean }) {
-  const [fokus, setFokus] = useState(-1);
+  const [indeks, setIndeks] = useState(0);
+  const fokus = aktif ? indeks : -1;
 
   useEffect(() => {
-    if (!aktif) {
-      setFokus(-1);
-      return;
-    }
-
-    setFokus(0);
+    if (!aktif) return;
 
     if (
       typeof window !== "undefined" &&
@@ -41,7 +37,7 @@ export function ModuleFlow({ aktif }: { aktif: boolean }) {
     }
 
     const interval = window.setInterval(() => {
-      setFokus((sebelumnya) => (sebelumnya + 1) % modules.length);
+      setIndeks((sebelumnya) => (sebelumnya + 1) % modules.length);
     }, 1500);
 
     return () => window.clearInterval(interval);

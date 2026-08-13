@@ -60,9 +60,12 @@ export default function ReceiptPage() {
   const [edited, setEdited] = useState(false);
 
   useEffect(() => {
-    setItems(receipt.items.map((item) => ({ ...item })));
-    setSaved(false);
-    setEdited(false);
+    const resetTimer = setTimeout(() => {
+      setItems(receipt.items.map((item) => ({ ...item })));
+      setSaved(false);
+      setEdited(false);
+    }, 0);
+    return () => clearTimeout(resetTimer);
   }, [receipt]);
 
   function updateQuantity(index: number, quantity: number) {

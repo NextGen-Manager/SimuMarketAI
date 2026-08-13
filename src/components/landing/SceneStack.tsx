@@ -151,8 +151,8 @@ export function SceneStack({ scenes }: { scenes: Scene[] }) {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStatis(true);
-      return;
+      const frame = requestAnimationFrame(() => setStatis(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     let mati = false;

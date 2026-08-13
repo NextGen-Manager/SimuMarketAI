@@ -134,11 +134,13 @@ export function LeafletMarketMap({
       mapRef.current = map;
       radiusCircleRef.current = radiusCircle;
       locationMarkerRef.current = locationMarker;
-      window.requestAnimationFrame(() => map.invalidateSize());
-      setStatus("ready");
+      window.requestAnimationFrame(() => {
+        map.invalidateSize();
+        setStatus("ready");
+      });
     } catch (error) {
       console.error("Leaflet map initialization failed.", error);
-      setStatus("error");
+      window.requestAnimationFrame(() => setStatus("error"));
     }
 
     return () => {

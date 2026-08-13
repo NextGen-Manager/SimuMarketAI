@@ -26,7 +26,7 @@ export default function Simulasi() {
   const { tandaiSelesai, varian, setVarian } = useDemoFlow();
   const skrip = varian === "parsial" ? langkahParsial : langkah;
 
-  const { aktivitas, stageAktif, persen, selesai, elapsed } = usePlayback(skrip);
+  const { aktivitas, stageAktif, persen, selesai } = usePlayback(skrip);
   const [tampilan, setTampilan] = useState<Tampilan>("feed");
   const [ikutiTerbaru, setIkutiTerbaru] = useState(true);
   const feedRef = useRef<HTMLDivElement>(null);

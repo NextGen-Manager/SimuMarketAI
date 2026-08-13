@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDemoFlow } from "@/demo/DemoFlowProvider";
@@ -32,17 +32,15 @@ export default function CatatTransaksi() {
   const [jumlah, setJumlah] = useState(1);
   const cariRef = useRef<HTMLSelectElement>(null);
 
-  useEffect(() => {
-    setProdukId(business.products[0]?.id ?? "");
-    setJumlah(1);
-  }, [business]);
-
-  const dipilih = business.products.find((product) => product.id === produkId);
+  const validProdukId = business.products.some((product) => product.id === produkId)
+    ? produkId
+    : (business.products[0]?.id ?? "");
+  const dipilih = business.products.find((product) => product.id === validProdukId);
   const scopedTransactions = transaksiHariIni.filter((transaction) => transaction.businessId === business.id);
 
   function simpan() {
     if (!dipilih) return;
-    catatTransaksi({ businessId: business.id, produkId, jumlah, harga: dipilih.sellingPriceIdr });
+    catatTransaksi({ businessId: business.id, produkId: validProdukId, jumlah, harga: dipilih.sellingPriceIdr });
     tandaiSelesai("input");
     setJumlah(1);
     cariRef.current?.focus();
@@ -62,7 +60,11 @@ export default function CatatTransaksi() {
             type="button"
             role="tab"
             aria-selected={business.id === item.id}
-            onClick={() => setActiveBusinessId(item.id)}
+            onClick={() => {
+              setActiveBusinessId(item.id);
+              setProdukId(item.products[0]?.id ?? "");
+              setJumlah(1);
+            }}
             className={cn(
               "rounded-[9px] border px-4 py-2.5 text-left",
               business.id === item.id
@@ -98,7 +100,7 @@ export default function CatatTransaksi() {
               <select
                 id="produk"
                 ref={cariRef}
-                value={produkId}
+                value={validProdukId}
                 onChange={(e) => setProdukId(e.target.value)}
                 className="w-full rounded-[8px] border border-line bg-surface px-3 py-2.5 text-[15px] text-ink-900"
               >
