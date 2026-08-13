@@ -185,10 +185,15 @@ export default function DashboardPage() {
               <h1 className="text-[24px] font-bold tracking-[-0.025em] text-ink-900 sm:text-[28px]">Selamat pagi, {dashboardSeed.user.name}</h1>
               <p className="mt-1 text-[13px] text-ink-500">Ringkasan gabungan seluruh usaha dan hal yang perlu ditindaklanjuti hari ini.</p>
             </div>
-            <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center gap-2 rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface transition-colors hover:bg-teal-600">
-              <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M10 3v14M3 10h14" /></svg>
-              Catat penjualan
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/demo/langganan" className="inline-flex h-10 items-center justify-center rounded-[9px] border border-line bg-surface px-4 text-[12.5px] font-bold text-ink-700 transition-colors hover:bg-surface-2">
+                Lihat paket
+              </Link>
+              <Link href="/demo/transaksi/catat" className="inline-flex h-10 items-center justify-center gap-2 rounded-[9px] bg-teal-700 px-4 text-[12.5px] font-bold text-surface transition-colors hover:bg-teal-600">
+                <svg viewBox="0 0 20 20" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M10 3v14M3 10h14" /></svg>
+                Catat penjualan
+              </Link>
+            </div>
           </div>
 
           <section aria-labelledby="today-title" className="overflow-hidden rounded-[14px] border border-line bg-surface">
