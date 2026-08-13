@@ -35,6 +35,7 @@ export function DemoChrome({ children }: { children: React.ReactNode }) {
   const usesWorkspace =
     (isTransactionPage && journey !== "B") ||
     pathname.startsWith("/demo/laporan") ||
+    pathname === "/demo/langganan" ||
     pathname === "/demo/edukasi" ||
     pathname === "/demo/analisis/riwayat";
 
