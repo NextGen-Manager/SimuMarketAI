@@ -34,6 +34,30 @@ export function formatPersen(value: number, digits = 0): string {
   return `${value.toLocaleString("id-ID", { maximumFractionDigits: digits })}%`;
 }
 
+const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "Asia/Jakarta",
+});
+
+const dateTimeFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Jakarta",
+});
+
+export function formatDate(value: string): string {
+  return dateFormatter.format(new Date(value));
+}
+
+export function formatDateTime(value: string): string {
+  return `${dateTimeFormatter.format(new Date(value))} WIB`;
+}
+
 /** Waktu relatif sejak run mulai, untuk lini masa simulasi. */
 export function formatDetik(ms: number): string {
   const total = Math.floor(ms / 1000);
