@@ -19,7 +19,9 @@ import {
   confidenceLabels,
   metricLabels,
   statusLabels,
+  type AgentReview,
   type AnalysisReport,
+  type SyntheticSimulation,
 } from "@/lib/contracts/analysis";
 import { businessTypeLabels } from "@/lib/contracts/education";
 import {
@@ -440,21 +442,14 @@ function ReportSections({ report }: { report: AnalysisReport }) {
       </Section>
 
       <Section number="06" title="Simulasi persona sintetis">
-        <div className="flex flex-wrap items-center gap-3">
-          <StatusBadge status="tidak-tersedia" label="Tidak tersedia" />
-          <p className="text-[14px] text-ink-700">
-            {report.synthetic_simulation.reason ??
-              "Simulasi agent belum dijalankan pada versi ini."}
-          </p>
-        </div>
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-[13px] text-ink-500">
-          {report.synthetic_simulation.limitations.map((limitation) => (
-            <li key={limitation}>{limitation}</li>
-          ))}
-        </ul>
+        <SimulationSection simulation={report.synthetic_simulation} />
       </Section>
 
-      <Section number="07" title="Peta risiko">
+      <Section number="07" title="Tinjauan agent">
+        <AgentReviewSection review={report.agent_review} />
+      </Section>
+
+      <Section number="08" title="Peta risiko">
         {report.risks.length === 0 ? (
           <p className="text-[14px] text-ink-500">Tidak ada risiko yang terdeteksi rule.</p>
         ) : (
@@ -476,7 +471,7 @@ function ReportSections({ report }: { report: AnalysisReport }) {
         )}
       </Section>
 
-      <Section number="08" title="Rekomendasi prioritas">
+      <Section number="09" title="Rekomendasi prioritas">
         {report.recommendations.length === 0 ? (
           <p className="text-[14px] text-ink-500">Tidak ada rekomendasi dari rule saat ini.</p>
         ) : (
@@ -506,7 +501,7 @@ function ReportSections({ report }: { report: AnalysisReport }) {
         )}
       </Section>
 
-      <Section number="09" title="Bukti dan keterbatasan">
+      <Section number="10" title="Bukti dan keterbatasan">
         <h3 className="text-[14px] font-semibold text-ink-900">Bukti yang dipakai</h3>
         {report.evidence.length === 0 ? (
           <p className="mt-1 text-[13.5px] text-ink-700">
@@ -597,6 +592,233 @@ function ReportSections({ report }: { report: AnalysisReport }) {
         </p>
       </Section>
     </div>
+  );
+}
+
+function SimulationSection({ simulation }: { simulation: SyntheticSimulation }) {
+  if (simulation.status === "unavailable") {
+    return (
+      <>
+        <div className="flex flex-wrap items-center gap-3">
+          <StatusBadge status="tidak-tersedia" label="Tidak tersedia" />
+          <p className="text-[14px] text-ink-700">
+            {simulation.reason ?? "Simulasi agent tidak dijalankan pada run ini."}
+          </p>
+        </div>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-[13px] text-ink-500">
+          {simulation.limitations.map((limitation) => (
+            <li key={limitation}>{limitation}</li>
+          ))}
+        </ul>
+      </>
+    );
+  }
+
+  const cohort = simulation.cohort_size ?? 0;
+  const activated = simulation.metrics.activated_persona_count ?? 0;
+
+  return (
+    <>
+      <div className="flex flex-wrap items-center gap-3">
+        <StatusBadge status="perlu-dikonfirmasi" label="Sinyal sintetis eksploratif" />
+        <p className="text-[14px] text-ink-700">
+          {cohort} persona sintetis dalam {simulation.rounds ?? 0} round.
+        </p>
+      </div>
+
+      {/* Hitungan, bukan persentase: pembaginya wajib terlihat. */}
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricTile
+          label="Memilih membeli"
+          value={`${simulation.metrics.purchase_intent_count ?? 0} dari ${activated}`}
+          note="Persona aktif, bukan pelanggan nyata"
+        />
+        <MetricTile
+          label="Reaksi positif"
+          value={`${simulation.metrics.positive_reaction_count ?? 0} dari ${activated}`}
+        />
+        <MetricTile
+          label="Berubah pendapat"
+          value={`${simulation.metrics.opinion_shift_count ?? 0} dari ${activated}`}
+          note="Setelah melihat respons persona lain"
+        />
+        <MetricTile
+          label="Rentang harga yang diterima"
+          value={
+            simulation.acceptable_price_band
+              ? `${formatIDR(simulation.acceptable_price_band.min_idr)} – ${formatIDR(simulation.acceptable_price_band.max_idr)}`
+              : "Tidak tersedia"
+          }
+          note="Preferensi sintetis, bukan harga pasar"
+        />
+      </div>
+
+      {simulation.segments.length > 0 ? (
+        <div className="mt-5 space-y-3">
+          <h3 className="text-[14px] font-semibold text-ink-900">Kecocokan per segmen</h3>
+          {simulation.segments.map((segment) => (
+            <div
+              key={segment.archetype}
+              className="flex flex-wrap items-baseline justify-between gap-2"
+            >
+              <span className="text-[13px] text-ink-700">{segment.label}</span>
+              <span className="tnum text-[13px] font-semibold text-ink-900">
+                {segment.purchase_intent_count} dari {segment.persona_count} memilih membeli
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {simulation.objections.length > 0 ? (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-ink-900">Keberatan yang muncul</h3>
+          <ul className="mt-2 space-y-1 text-[13px] text-ink-700">
+            {simulation.objections.map((objection) => (
+              <li key={objection.code} className="flex justify-between gap-4">
+                <span>{objection.label}</span>
+                <span className="tnum font-semibold">{objection.count} persona</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {simulation.quotes.length > 0 ? (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-ink-900">Kutipan persona</h3>
+          <ul className="mt-2 space-y-3">
+            {simulation.quotes.map((quote) => (
+              <li key={quote.agent_id} className="rounded-[10px] border border-line px-4 py-3">
+                <p className="text-[13.5px] leading-relaxed text-ink-700">“{quote.text}”</p>
+                <p className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-ink-500">
+                  <span>{quote.archetype}</span>
+                  <span aria-hidden>·</span>
+                  {/* Label wajib pada setiap kutipan agent. */}
+                  <StatusBadge status="perlu-dikonfirmasi" label={quote.label} />
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <ul className="mt-5 list-disc space-y-1 pl-5 text-[13px] text-ink-500">
+        {simulation.limitations.map((limitation) => (
+          <li key={limitation}>{limitation}</li>
+        ))}
+      </ul>
+      {simulation.cohort_version ? (
+        <p className="mt-3 font-mono text-[10px] text-ink-400">
+          Cohort {simulation.cohort_version}
+        </p>
+      ) : null}
+    </>
+  );
+}
+
+function AgentReviewSection({ review }: { review: AgentReview }) {
+  if (review.status === "unavailable") {
+    return (
+      <div className="flex flex-wrap items-center gap-3">
+        <StatusBadge status="tidak-tersedia" label="Tidak tersedia" />
+        <p className="text-[14px] text-ink-700">
+          {review.reason ?? "Tinjauan agent tidak tersedia pada run ini."}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {review.status === "partial" ? (
+        <Callout tone="warn">
+          <p className="font-semibold text-ink-900">Tinjauan agent tidak lengkap</p>
+          <p className="mt-1">
+            {review.reason ?? "Sebagian council tidak menghasilkan artifact yang valid."}
+          </p>
+        </Callout>
+      ) : null}
+
+      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+        Bagian ini berisi penilaian kualitatif agent. Seluruh angka pada laporan tetap berasal
+        dari engine deterministik, bukan dari teks di bawah ini.
+      </p>
+
+      {review.narrative_sections.length > 0 ? (
+        <div className="mt-4 space-y-4">
+          {review.narrative_sections.map((section) => (
+            <div key={section.id}>
+              <h3 className="text-[14px] font-semibold text-ink-900">{section.title}</h3>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-ink-700">{section.body}</p>
+              <p className="mt-1 font-mono text-[10px] text-ink-400">
+                Sumber artifact: {section.source_artifact_types.join(", ")}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {review.market_observations.length > 0 ? (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-ink-900">Catatan analis pasar</h3>
+          <ul className="mt-2 space-y-2">
+            {review.market_observations.map((observation) => (
+              <li key={observation.id} className="rounded-[10px] border border-line px-4 py-3">
+                <p className="text-[13.5px] leading-relaxed text-ink-700">{observation.claim}</p>
+                <p className="mt-1 font-mono text-[10px] text-ink-400">
+                  {observation.stance} · keyakinan {observation.confidence}
+                  {observation.evidence_metrics.length > 0
+                    ? ` · bukti: ${observation.evidence_metrics
+                        .map((metric) => metricLabels[metric] ?? metric)
+                        .join(", ")}`
+                    : " · belum ada bukti pendukung"}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {review.finance_critiques.length > 0 ? (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-ink-900">Kritik asumsi finansial</h3>
+          <ul className="mt-2 space-y-2">
+            {review.finance_critiques.map((critique) => (
+              <li key={critique.id} className="rounded-[10px] border border-line px-4 py-3">
+                <p className="text-[14px] font-semibold text-ink-900">{critique.assumption}</p>
+                <p className="mt-1 text-[13px] leading-relaxed text-ink-700">
+                  {critique.concern}
+                </p>
+                <p className="mt-1 font-mono text-[10px] text-ink-400">
+                  Hasil kalkulator: {critique.tool_call_ids.join(", ")}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {review.red_team_findings.length > 0 ? (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-ink-900">Temuan red-team</h3>
+          <ul className="mt-1 list-disc space-y-1 pl-5 text-[13px] text-ink-700">
+            {review.red_team_findings.map((finding) => (
+              <li key={finding}>{finding}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {review.manifest ? (
+        <p className="mt-5 font-mono text-[10px] leading-relaxed text-ink-400">
+          {review.manifest.model_id} · prompt {review.manifest.prompt_version} · cohort{" "}
+          {review.manifest.cohort_version} · seed {review.manifest.seed} · OASIS{" "}
+          {review.manifest.oasis_version} · CAMEL {review.manifest.camel_version} ·{" "}
+          {review.manifest.tokens_used} dari {review.manifest.token_budget} token
+        </p>
+      ) : null}
+    </>
   );
 }
 

@@ -145,7 +145,9 @@ export function AnalysisForm() {
           value_proposition: valueProposition.trim(),
         }),
       });
-      router.push(`/laporan/${accepted.analysis_id}`);
+      // The run is queued, not finished: go to the live progress screen, which
+      // renders the report itself once the server says the run is done.
+      router.push(`/analisis/${accepted.analysis_id}`);
     } catch (caught) {
       setSubmitError(caught instanceof ApiError ? caught : null);
     } finally {
@@ -389,7 +391,14 @@ export function AnalysisForm() {
         </Callout>
       ) : null}
 
-      {submitError ? (
+      {/*
+        Sesi yang berakhir saat submit tidak boleh membuang isian. Form tetap
+        terpasang di bawah pesan ini, jadi seluruh draft masih ada saat pengguna
+        kembali dari halaman masuk.
+      */}
+      {submitError?.status === 401 ? (
+        <UnauthorizedState next="/analisis" />
+      ) : submitError ? (
         <ErrorState
           message={submitError.message}
           correlationId={submitError.correlationId}
