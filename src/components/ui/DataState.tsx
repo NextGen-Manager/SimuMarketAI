@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 
 export function DataSkeleton({ rows = 3 }: { rows?: number }) {
   return (
@@ -35,6 +35,23 @@ export function ErrorState({
           Coba lagi
         </Button>
       ) : null}
+    </div>
+  );
+}
+
+export function UnauthorizedState({ next }: { next?: string }) {
+  const href = next ? `/masuk?next=${encodeURIComponent(next)}` : "/masuk";
+  return (
+    <div className="rounded-[12px] border border-line bg-surface px-6 py-12 text-center" role="alert">
+      <h2 className="text-[18px] font-semibold text-ink-900">Sesi kamu sudah berakhir</h2>
+      <p className="mx-auto mt-2 max-w-[52ch] text-[14px] leading-relaxed text-ink-500">
+        Masuk lagi untuk melanjutkan. Isian yang sedang kamu kerjakan tetap ada di layar ini.
+      </p>
+      <div className="mt-5">
+        <ButtonLink href={href} variant="secondary">
+          Masuk
+        </ButtonLink>
+      </div>
     </div>
   );
 }
