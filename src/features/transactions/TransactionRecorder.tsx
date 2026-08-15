@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { Button } from "@/components/ui/Button";
+import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card, CardBody } from "@/components/ui/Card";
 import { DataSkeleton, EmptyState, ErrorState } from "@/components/ui/DataState";
 import { SelectField } from "@/components/ui/FormControls";
@@ -85,6 +85,12 @@ export function TransactionRecorder() {
 
   return (
     <div className="space-y-5">
+      <div className="flex flex-wrap gap-3">
+        <ButtonLink href="/transaksi/catat">Input manual</ButtonLink>
+        <ButtonLink href="/transaksi/struk" variant="secondary">
+          Foto struk
+        </ButtonLink>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <BusinessSelector value={businessId} onChange={(id) => { setBusinessId(id); setQuantities({}); }} />
         <SelectField label="Kanal penjualan" value={channel} onChange={(event) => setChannel(event.target.value)}>
