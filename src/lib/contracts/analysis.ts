@@ -160,6 +160,117 @@ export const analysisWarningSchema = z.object({
   message: z.string(),
 });
 
+/**
+ * Label wajib pada setiap kutipan agent. Backend mengirimkannya bersama data
+ * supaya tidak ada permukaan yang bisa lupa menampilkannya.
+ */
+export const SYNTHETIC_LABEL = "respons sintetis" as const;
+
+export const syntheticSimulationSchema = z.object({
+  status: z.enum(["unavailable", "experimental"]),
+  reason: z.string().nullable(),
+  cohort_size: z.int().nullable(),
+  cohort_version: z.string().nullable(),
+  rounds: z.int().nullable(),
+  // Hitungan, bukan persentase: pembaginya harus tetap terlihat.
+  metrics: z.record(z.string(), z.int()),
+  segments: z.array(
+    z.object({
+      archetype: z.string(),
+      label: z.string(),
+      persona_count: z.int(),
+      purchase_intent_count: z.int(),
+    }),
+  ),
+  objections: z.array(
+    z.object({ code: z.string(), label: z.string(), count: z.int() }),
+  ),
+  acceptable_price_band: z
+    .object({ min_idr: z.int(), max_idr: z.int() })
+    .nullable(),
+  quotes: z.array(
+    z.object({
+      agent_id: z.string(),
+      archetype: z.string(),
+      text: z.string(),
+      label: z.literal(SYNTHETIC_LABEL),
+    }),
+  ),
+  limitations: z.array(z.string()),
+});
+
+export const agentReviewSchema = z.object({
+  status: z.enum(["available", "partial", "unavailable"]),
+  reason: z.string().nullable(),
+  label: z.literal(SYNTHETIC_LABEL),
+  manifest: z
+    .object({
+      adapter_id: z.string(),
+      provider: z.string(),
+      model_id: z.string(),
+      prompt_version: z.string(),
+      cohort_version: z.string(),
+      oasis_version: z.string(),
+      camel_version: z.string(),
+      seed: z.int(),
+      persona_count: z.int(),
+      round_limit: z.int(),
+      token_budget: z.int(),
+      tokens_used: z.int(),
+    })
+    .nullable(),
+  market_observations: z.array(
+    z.object({
+      id: z.string(),
+      stance: z.enum(["opportunity", "risk", "uncertainty"]),
+      claim: z.string(),
+      evidence_metrics: z.array(z.string()),
+      confidence: z.enum(["low", "medium", "high"]),
+    }),
+  ),
+  evidence_gaps: z.array(z.string()),
+  disagreements: z.array(z.string()),
+  finance_critiques: z.array(
+    z.object({
+      id: z.string(),
+      assumption: z.string(),
+      concern: z.string(),
+      severity: z.enum(["low", "medium", "high"]),
+      tool_call_ids: z.array(z.string()),
+    }),
+  ),
+  fragile_assumptions: z.array(z.string()),
+  narrative_sections: z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      body: z.string(),
+      source_artifact_types: z.array(z.string()),
+    }),
+  ),
+  red_team_findings: z.array(z.string()),
+});
+
+/**
+ * Satu transisi tahap yang dikirim lewat SSE. Bentuknya sama persis dengan yang
+ * disimpan backend di PostgreSQL, sehingga reconnect dan polling menghasilkan
+ * data yang identik.
+ */
+export const analysisEventSchema = z.object({
+  schema_version: z.literal("analysis-event-v1"),
+  event_id: z.string(),
+  analysis_id: z.uuid(),
+  status: analysisStatusSchema,
+  current_stage: analysisStageSchema,
+  completed_stages: z.array(analysisStageSchema),
+  skipped_stages: z.array(analysisStageSchema),
+  percent: z.int().min(0).max(100),
+  message: z.string(),
+  warnings: z.array(analysisWarningSchema),
+  correlation_id: z.uuid(),
+  occurred_at: z.iso.datetime(),
+});
+
 export const analysisReportSchema = z.object({
   analysis_id: z.uuid(),
   report_version: z.literal("report-v1"),
@@ -186,13 +297,8 @@ export const analysisReportSchema = z.object({
     comparable_price_sample_size: z.int().nullable(),
     notes: z.array(z.string()),
   }),
-  synthetic_simulation: z.object({
-    status: z.enum(["unavailable", "experimental"]),
-    reason: z.string().nullable(),
-    cohort_size: z.int().nullable(),
-    metrics: z.record(z.string(), z.int()),
-    limitations: z.array(z.string()),
-  }),
+  synthetic_simulation: syntheticSimulationSchema,
+  agent_review: agentReviewSchema,
   finance: financeResultSchema,
   risks: z.array(
     z.object({
@@ -297,7 +403,40 @@ export const statusLabels: Record<string, string> = {
   cancelled: "Dibatalkan",
 };
 
+/** Urutan tahap sesuai state machine docs/02. Dipakai untuk merender daftar. */
+export const stageOrder = analysisStageSchema.options;
+
+/** Yang terlihat bergerak di tiap tahap, sesuai tabel docs/12. */
+export const stageDetails: Record<string, string> = {
+  queued: "Run menunggu giliran di antrean worker.",
+  collecting_evidence: "Mengambil bukti pasar beserta sumber dan waktu pengamatannya.",
+  building_context: "Membekukan concept card yang dilihat seluruh persona.",
+  simulating: "Empat council agent berjalan: pasar, persona, finansial, dan laporan.",
+  calculating_finance: "Engine deterministik menghitung tiga skenario.",
+  scoring: "Menilai empat dimensi kelayakan dari rule versioned.",
+  composing_report: "Menyusun laporan dari artifact terstruktur.",
+  validating_report: "Memeriksa aritmetika, provenance, dan klaim tanpa sumber.",
+};
+
+export const terminalStatuses = ["completed", "partial", "failed", "cancelled"] as const;
+
+export function isTerminalStatus(status: string): boolean {
+  return (terminalStatuses as readonly string[]).includes(status);
+}
+
+export const failureCodeLabels: Record<string, string> = {
+  report_validation_failed:
+    "Laporan tidak lolos pemeriksaan klaim sehingga tidak disimpan.",
+  invalid_finance_input: "Isian finansial tidak dapat dipakai untuk perhitungan.",
+  input_snapshot_missing: "Snapshot input untuk run ini tidak ditemukan.",
+  internal_error: "Terjadi gangguan pada sistem saat menjalankan analisis.",
+};
+
 export type AnalysisReport = z.infer<typeof analysisReportSchema>;
+export type AnalysisEvent = z.infer<typeof analysisEventSchema>;
+export type AnalysisStage = z.infer<typeof analysisStageSchema>;
+export type AgentReview = z.infer<typeof agentReviewSchema>;
+export type SyntheticSimulation = z.infer<typeof syntheticSimulationSchema>;
 export type AnalysisRead = z.infer<typeof analysisReadSchema>;
 export type AnalysisListItem = z.infer<typeof analysisListItemSchema>;
 export type AnalysisInput = z.infer<typeof analysisInputSchema>;
