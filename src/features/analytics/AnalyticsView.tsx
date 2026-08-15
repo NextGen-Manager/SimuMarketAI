@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { DataSkeleton, EmptyState, ErrorState } from "@/components/ui/DataState";
 import { BusinessSelector, useInitialBusiness } from "@/features/businesses/BusinessSelector";
+import { ExportButton } from "@/features/exports/ExportButton";
 import { useApiResource } from "@/lib/api/useApiResource";
 import { analyticsSchema } from "@/lib/contracts/operations";
 import { formatDate, formatIDR } from "@/lib/format";
@@ -34,6 +35,20 @@ export function AnalyticsView() {
         />
       ) : data ? (
         <>
+          {data.observation_window ? (
+            <div className="flex justify-end">
+              <ExportButton
+                endpoint="/v1/transaction-exports"
+                payload={{
+                  business_id: businessId,
+                  start: `${data.observation_window.start}T00:00:00+07:00`,
+                  end: `${data.observation_window.end}T23:59:59+07:00`,
+                  format: "pdf",
+                }}
+                label="Unduh ringkasan PDF"
+              />
+            </div>
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <SalesCard title="Produk terlaris" name={data.top_product?.product_name} value={data.top_product ? `${data.top_product.quantity} terjual` : undefined} />
             <SalesCard title="Produk penjualan terendah" name={data.bottom_product?.product_name} value={data.bottom_product ? `${data.bottom_product.quantity} terjual` : undefined} />

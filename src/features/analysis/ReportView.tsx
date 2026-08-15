@@ -11,6 +11,7 @@ import {
 import { ScoreGauge } from "@/components/ui/Gauge";
 import { Callout, MeterBar, MetricTile } from "@/components/ui/Metric";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { ExportButton } from "@/features/exports/ExportButton";
 import { useApiResource } from "@/lib/api/useApiResource";
 import {
   analysisReadSchema,
@@ -97,10 +98,10 @@ export function ReportView({ analysisId }: { analysisId: string }) {
   }
   if (!report.data) return null;
 
-  return <ReportSections report={report.data} />;
+  return <ReportSections report={report.data} analysisId={analysisId} />;
 }
 
-function ReportSections({ report }: { report: AnalysisReport }) {
+function ReportSections({ report, analysisId }: { report: AnalysisReport; analysisId: string }) {
   const partial = report.status === "partial";
   const readiness = report.readiness;
   const finance = report.finance;
@@ -108,6 +109,13 @@ function ReportSections({ report }: { report: AnalysisReport }) {
 
   return (
     <div className="space-y-5">
+      <div className="flex justify-end">
+        <ExportButton
+          endpoint={`/v1/analyses/${analysisId}/exports`}
+          payload={{ format: "pdf" }}
+          label="Unduh laporan PDF"
+        />
+      </div>
       {partial ? (
         <Callout tone="warn">
           <p className="font-semibold text-ink-900">Laporan selesai sebagian</p>
