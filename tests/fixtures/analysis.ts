@@ -224,10 +224,30 @@ export const analysisReport = {
     reason:
       "Simulasi agent belum dijalankan karena integrasi OASIS belum aktif pada versi ini.",
     cohort_size: null,
+    cohort_version: null,
+    rounds: null,
     metrics: {},
+    segments: [],
+    objections: [],
+    acceptable_price_band: null,
+    quotes: [],
     limitations: [
       "Tidak ada kutipan persona pada laporan ini karena simulasi belum dijalankan.",
     ],
+  },
+  agent_review: {
+    status: "unavailable",
+    reason:
+      "Simulasi agent belum dijalankan karena integrasi OASIS belum aktif pada versi ini.",
+    label: "respons sintetis",
+    manifest: null,
+    market_observations: [],
+    evidence_gaps: [],
+    disagreements: [],
+    finance_critiques: [],
+    fragile_assumptions: [],
+    narrative_sections: [],
+    red_team_findings: [],
   },
   finance: financeResult,
   risks: [
