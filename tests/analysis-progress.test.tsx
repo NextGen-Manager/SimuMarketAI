@@ -41,6 +41,10 @@ class FakeEventSource {
 
   emit(payload: Record<string, unknown>) {
     const data = JSON.stringify(payload);
+    this.emitRaw(data);
+  }
+
+  emitRaw(data: string) {
     for (const listener of this.listeners.get("status") ?? []) {
       listener(new MessageEvent("status", { data }));
     }
@@ -65,6 +69,7 @@ function event(overrides: Record<string, unknown> = {}) {
     percent: 0,
     message: "Mengumpulkan bukti lokal",
     warnings: [],
+    failure_code: null,
     correlation_id: "3d0b0f70-9a2f-4a4e-8e5d-9d84f6a4a6f1",
     occurred_at: "2026-08-15T02:00:00Z",
     ...overrides,
@@ -184,6 +189,16 @@ describe("rendering tahap", () => {
     await waitFor(() => expect(screen.getByText("60%")).toBeInTheDocument());
     expect(screen.queryByText("15%")).not.toBeInTheDocument();
   });
+
+  it("mengabaikan frame SSE yang bukan JSON tanpa merusak stream", async () => {
+    render(<AnalysisProgress analysisId={analysisId} />);
+    const source = FakeEventSource.instances[0];
+    source.emitRaw("bukan-json");
+    source.emit(event({ event_id: "2", percent: 15, message: "Menyusun konteks" }));
+
+    expect(await screen.findByText("15%")).toBeInTheDocument();
+    expect(source.closed).toBe(false);
+  });
 });
 
 describe("kegagalan dan status terminal", () => {
@@ -209,6 +224,29 @@ describe("kegagalan dan status terminal", () => {
     expect(alert).toHaveTextContent("Gagal");
     expect(
       screen.getByRole("link", { name: "Jalankan analisis baru" }),
+    ).toBeInTheDocument();
+  });
+
+  it("menampilkan failure code, bukan menebak dari urutan warning", async () => {
+    render(<AnalysisProgress analysisId={analysisId} />);
+    FakeEventSource.instances[0].emit(
+      event({
+        event_id: "9",
+        status: "failed",
+        current_stage: "simulating",
+        failure_code: "worker_lost",
+        warnings: [
+          {
+            code: "simulation_partial",
+            stage: "simulating",
+            message: "Sebagian simulasi tidak tersedia.",
+          },
+        ],
+      }),
+    );
+
+    expect(
+      await screen.findByText("Proses analisis berhenti setelah melewati batas percobaan ulang."),
     ).toBeInTheDocument();
   });
 
@@ -284,6 +322,34 @@ describe("reconnect dan fallback", () => {
     expect(source.closed).toBe(true);
     // Tidak ada koneksi SSE baru yang dibuat setelah menyerah.
     expect(FakeEventSource.instances).toHaveLength(1);
+  });
+
+  it("menerima snapshot polling setelah sebelumnya menerima event SSE bernomor lebih besar", async () => {
+    const fetchMock = vi.fn(() =>
+      jsonResponse({
+        ...analysisRun,
+        status: "scoring",
+        completed_at: null,
+        progress: {
+          completed_stages: ["queued", "collecting_evidence", "building_context"],
+          skipped_stages: [],
+          current_stage: "scoring",
+          message: "Menilai kelayakan",
+          percent: 70,
+        },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AnalysisProgress analysisId={analysisId} />);
+    const source = FakeEventSource.instances[0];
+    source.emit(event({ event_id: "8", percent: 60, message: "Menghitung finansial" }));
+    await screen.findByText("60%");
+
+    for (let attempt = 0; attempt < 4; attempt += 1) source.fail();
+
+    expect(await screen.findByText("70%")).toBeInTheDocument();
+    expect(screen.queryByText("60%")).not.toBeInTheDocument();
   });
 
   it("berhenti polling ketika sesi berakhir", async () => {
