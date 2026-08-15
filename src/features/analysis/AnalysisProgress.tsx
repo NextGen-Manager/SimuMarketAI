@@ -61,7 +61,7 @@ export function AnalysisProgress({ analysisId }: { analysisId: string }) {
               Analisis {statusLabels[event.status] ?? event.status}
             </p>
             <p className="mt-1">
-              {failureCodeLabels[event.warnings[0]?.code ?? ""] ??
+              {failureCodeLabels[event.failure_code ?? ""] ??
                 "Analisis berhenti sebelum menghasilkan laporan. Tidak ada angka sementara yang diisikan menggantikan hasil yang gagal."}
             </p>
             <p className="mt-2 font-mono text-[11px] text-ink-500">

@@ -55,11 +55,23 @@ export function useAnalysisStream(
   const doneRef = useRef(false);
   const factory = options.eventSourceFactory;
 
-  const receive = useCallback((event: AnalysisEvent) => {
+  /**
+   * Terima satu event.
+   *
+   * `ordered` hanya berlaku untuk frame SSE, yang bisa tiba lagi dengan urutan
+   * lama setelah reconnect. Hasil polling adalah pembacaan langsung ke sistem
+   * pencatat, jadi selalu lebih baru daripada apa pun yang ada di state — kalau
+   * ia ikut dibandingkan lewat `event_id`, satu event SSE yang sempat masuk akan
+   * membuat seluruh hasil polling dibuang dan UI berhenti di tahap lama.
+   */
+  const receive = useCallback((event: AnalysisEvent, { ordered }: { ordered: boolean }) => {
     doneRef.current = isTerminalStatus(event.status);
     setState((current) => {
-      // Event lama bisa tiba lagi setelah reconnect; yang lebih baru menang.
-      if (current.event && Number(current.event.event_id) > Number(event.event_id)) {
+      if (
+        ordered &&
+        current.event &&
+        Number(current.event.event_id) > Number(event.event_id)
+      ) {
         return current;
       }
       return { ...current, event, reconnecting: false, error: null };
@@ -80,20 +92,24 @@ export function useAnalysisStream(
       try {
         const run = await apiFetch(`/v1/analyses/${analysisId}`, analysisReadSchema);
         if (closed) return;
-        receive({
-          schema_version: "analysis-event-v1",
-          event_id: "0",
-          analysis_id: run.analysis_id,
-          status: run.status,
-          current_stage: run.progress.current_stage,
-          completed_stages: run.progress.completed_stages,
-          skipped_stages: run.progress.skipped_stages,
-          percent: run.progress.percent,
-          message: run.progress.message,
-          warnings: run.warnings,
-          correlation_id: run.correlation_id,
-          occurred_at: run.completed_at ?? run.started_at ?? run.created_at,
-        });
+        receive(
+          {
+            schema_version: "analysis-event-v1",
+            event_id: "0",
+            analysis_id: run.analysis_id,
+            status: run.status,
+            current_stage: run.progress.current_stage,
+            completed_stages: run.progress.completed_stages,
+            skipped_stages: run.progress.skipped_stages,
+            percent: run.progress.percent,
+            message: run.progress.message,
+            warnings: run.warnings,
+            failure_code: run.failure_code,
+            correlation_id: run.correlation_id,
+            occurred_at: run.completed_at ?? run.started_at ?? run.created_at,
+          },
+          { ordered: false },
+        );
         if (isTerminalStatus(run.status)) return;
       } catch (caught) {
         if (closed) return;
@@ -119,12 +135,16 @@ export function useAnalysisStream(
       source = factory ? factory(url) : new EventSource(url);
 
       source.addEventListener("status", (message) => {
-        const parsed = analysisEventSchema.safeParse(
-          JSON.parse((message as MessageEvent<string>).data),
-        );
+        let payload: unknown;
+        try {
+          payload = JSON.parse((message as MessageEvent<string>).data) as unknown;
+        } catch {
+          return;
+        }
+        const parsed = analysisEventSchema.safeParse(payload);
         if (!parsed.success) return;
         failures = 0;
-        receive(parsed.data);
+        receive(parsed.data, { ordered: true });
         if (doneRef.current) {
           source?.close();
           source = null;

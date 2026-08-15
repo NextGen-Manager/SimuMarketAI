@@ -267,6 +267,7 @@ export const analysisEventSchema = z.object({
   percent: z.int().min(0).max(100),
   message: z.string(),
   warnings: z.array(analysisWarningSchema),
+  failure_code: z.string().nullable().default(null),
   correlation_id: z.uuid(),
   occurred_at: z.iso.datetime(),
 });
@@ -430,6 +431,7 @@ export const failureCodeLabels: Record<string, string> = {
   invalid_finance_input: "Isian finansial tidak dapat dipakai untuk perhitungan.",
   input_snapshot_missing: "Snapshot input untuk run ini tidak ditemukan.",
   internal_error: "Terjadi gangguan pada sistem saat menjalankan analisis.",
+  worker_lost: "Proses analisis berhenti setelah melewati batas percobaan ulang.",
 };
 
 export type AnalysisReport = z.infer<typeof analysisReportSchema>;
