@@ -6,7 +6,12 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { useSession } from "@/features/auth/SessionProvider";
 import { cn } from "@/lib/format";
-import { workspaceMode, workspaceNavigation } from "@/lib/workspace-access";
+import {
+  activeNavigationHref,
+  primaryNavigation,
+  workspaceMode,
+  workspaceNavigation,
+} from "@/lib/workspace-access";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { session, logout } = useSession();
@@ -16,6 +21,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const mode = workspaceMode(session.memberships);
   const navigation = workspaceNavigation(session.memberships);
+  const mobileNavigation = primaryNavigation(session.memberships);
+  const activeHref = activeNavigationHref(pathname, navigation);
 
   return (
     <div className="min-h-screen bg-canvas md:grid md:grid-cols-[240px_1fr]">
@@ -26,7 +33,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Link>
         <nav className="mt-9 space-y-1" aria-label="Navigasi utama">
           {navigation.map((item) => (
-            <NavItem key={item.href} {...item} active={pathname === item.href || (item.href !== "/beranda" && pathname.startsWith(`${item.href}/`))} />
+            <NavItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              active={item.href === activeHref}
+            />
           ))}
         </nav>
         <p className="mt-auto px-2 text-[11px] leading-relaxed text-ink-400">
@@ -71,13 +83,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-surface md:hidden" aria-label="Navigasi utama seluler">
-        {navigation.map((item) => (
+        {mobileNavigation.map((item) => (
           <Link
             key={item.href}
             href={item.href}
+            aria-current={item.href === activeHref ? "page" : undefined}
             className={cn(
               "flex min-h-16 flex-1 items-center justify-center px-2 text-center text-[11px] font-semibold",
-              pathname === item.href ? "text-teal-700" : "text-ink-500",
+              item.href === activeHref ? "text-teal-700" : "text-ink-500",
             )}
           >
             {item.label}

@@ -34,6 +34,35 @@ export function formatPersen(value: number, digits = 0): string {
   return `${value.toLocaleString("id-ID", { maximumFractionDigits: digits })}%`;
 }
 
+/**
+ * Rasio marjin datang sebagai basis point supaya backend tidak pernah
+ * mengirim float di jalur uang. Di sini hanya diubah satuannya.
+ */
+export function formatBasisPoints(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "Tidak terdefinisi";
+  return `${(value / 100).toLocaleString("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
+}
+
+/** Angka apa pun yang boleh tidak terdefinisi ditulis apa adanya. */
+export function formatSatuan(
+  value: number | null | undefined,
+  satuan: string,
+): string {
+  if (value === null || value === undefined) return "Tidak terdefinisi";
+  return `${value.toLocaleString("id-ID")} ${satuan}`;
+}
+
+export function formatKeyakinan(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "Tidak tersedia";
+  return value.toLocaleString("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 const dateFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "numeric",
   month: "short",
