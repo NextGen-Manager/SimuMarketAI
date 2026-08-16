@@ -27,7 +27,7 @@ const stats = [
 
 export function LandingStats({ aktif }: { aktif: boolean }) {
   return (
-    <dl className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-3 sm:grid-cols-2">
       {stats.map((stat, index) => (
         <SceneReveal
           key={stat.value}
@@ -47,7 +47,7 @@ export function LandingStats({ aktif }: { aktif: boolean }) {
               <span
                 className={cn(
                   "font-mono text-[10.5px] font-bold uppercase tracking-[0.13em]",
-                  stat.featured ? "text-teal-500" : "text-ink-400",
+                  stat.featured ? "text-teal-50" : "text-ink-400",
                 )}
               >
                 {stat.context}
@@ -61,7 +61,7 @@ export function LandingStats({ aktif }: { aktif: boolean }) {
               />
             </div>
 
-            <div className="mt-8">
+            <dl className="mt-8">
               <dt
                 className={cn(
                   "tnum font-serif font-bold leading-none",
@@ -78,12 +78,12 @@ export function LandingStats({ aktif }: { aktif: boolean }) {
               >
                 {stat.label}
               </dd>
-            </div>
+            </dl>
 
             <span
               className={cn(
                 "mt-6 block font-mono text-[10.5px]",
-                stat.featured ? "text-white/35" : "text-ink-400",
+                stat.featured ? "text-white/65" : "text-ink-400",
               )}
             >
               {stat.source}
@@ -91,6 +91,6 @@ export function LandingStats({ aktif }: { aktif: boolean }) {
           </div>
         </SceneReveal>
       ))}
-    </dl>
+    </div>
   );
 }

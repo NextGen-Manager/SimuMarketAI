@@ -18,7 +18,7 @@ type Persona = {
 const arkeWarna: Record<Arke, string> = {
   budget: "bg-ink-500 text-white",
   convenience: "bg-teal-700 text-white",
-  quality: "bg-amber-600 text-white",
+  quality: "bg-amber-600 text-ink-900",
   social: "bg-info-600 text-white",
 };
 
