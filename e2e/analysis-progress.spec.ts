@@ -433,6 +433,9 @@ test("input analisis berlanjut ke proses live lalu laporan parsial", async ({ pa
 
 test("status tetap tampil lewat polling ketika SSE gagal", async ({ page }) => {
   await mockApi(page, { streamFails: true });
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "EventSource", { value: undefined });
+  });
 
   await page.goto(`/analisis/${analysisId}`);
 

@@ -54,9 +54,14 @@ test("owner can log in and receives owner navigation", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Produk", exact: true }).first()).toBeVisible();
 });
 
-test("cashier only sees permitted navigation and can record a sale", async ({ page }) => {
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+test("cashier only sees permitted navigation and can record a sale", async ({
+  page,
+  browserName,
+}) => {
+  if (browserName === "chromium") {
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  }
   await mockSession(page, "cashier");
   await page.route("**/api/backend/v1/products?*", (route) =>
     route.fulfill({
