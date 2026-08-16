@@ -1,10 +1,11 @@
 name: Deploy frontend to Vercel
 
+# Only `demo` reaches production. Development happens on `dev`, which must never
+# ship a half-built application while the demo is the sole public artifact.
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - demo
 
 permissions:
   contents: read

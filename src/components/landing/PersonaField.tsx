@@ -18,7 +18,7 @@ type Persona = {
 const arkeWarna: Record<Arke, string> = {
   budget: "bg-ink-500 text-white",
   convenience: "bg-teal-700 text-white",
-  quality: "bg-amber-600 text-white",
+  quality: "bg-amber-600 text-ink-900",
   social: "bg-info-600 text-white",
 };
 
@@ -155,16 +155,13 @@ export function PersonaFieldAuto({
   const [fase, setFase] = useState<0 | 1 | 2>(0);
 
   useEffect(() => {
-    if (!aktif) {
-      setFase(0);
-      return;
-    }
+    if (!aktif) return;
     if (
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      setFase(2);
-      return;
+      const reducedMotionTimer = setTimeout(() => setFase(2), 0);
+      return () => clearTimeout(reducedMotionTimer);
     }
     const a = setTimeout(() => setFase(1), 900);
     const b = setTimeout(() => setFase(2), 2400);
@@ -174,5 +171,5 @@ export function PersonaFieldAuto({
     };
   }, [aktif]);
 
-  return <PersonaField fase={fase} padat={padat} />;
+  return <PersonaField fase={aktif ? fase : 0} padat={padat} />;
 }

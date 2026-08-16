@@ -34,6 +34,59 @@ export function formatPersen(value: number, digits = 0): string {
   return `${value.toLocaleString("id-ID", { maximumFractionDigits: digits })}%`;
 }
 
+/**
+ * Rasio marjin datang sebagai basis point supaya backend tidak pernah
+ * mengirim float di jalur uang. Di sini hanya diubah satuannya.
+ */
+export function formatBasisPoints(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "Tidak terdefinisi";
+  return `${(value / 100).toLocaleString("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
+}
+
+/** Angka apa pun yang boleh tidak terdefinisi ditulis apa adanya. */
+export function formatSatuan(
+  value: number | null | undefined,
+  satuan: string,
+): string {
+  if (value === null || value === undefined) return "Tidak terdefinisi";
+  return `${value.toLocaleString("id-ID")} ${satuan}`;
+}
+
+export function formatKeyakinan(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "Tidak tersedia";
+  return value.toLocaleString("id-ID", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "Asia/Jakarta",
+});
+
+const dateTimeFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  timeZone: "Asia/Jakarta",
+});
+
+export function formatDate(value: string): string {
+  return dateFormatter.format(new Date(value));
+}
+
+export function formatDateTime(value: string): string {
+  return `${dateTimeFormatter.format(new Date(value))} WIB`;
+}
+
 /** Waktu relatif sejak run mulai, untuk lini masa simulasi. */
 export function formatDetik(ms: number): string {
   const total = Math.floor(ms / 1000);

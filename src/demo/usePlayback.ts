@@ -12,7 +12,8 @@ export function usePlayback(skrip: Langkah[], jalan = true) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    setIndeks(0);
+    const resetTimer = setTimeout(() => setIndeks(0), 0);
+    return () => clearTimeout(resetTimer);
   }, [skrip]);
 
   useEffect(() => {

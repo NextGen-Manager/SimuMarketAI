@@ -6,12 +6,18 @@ export function MetricTile({
   value,
   note,
   undefinedReason,
+  undefinedLabel = "Tidak terdefinisi",
 }: {
   label: string;
   value: string;
   note?: string;
   /** Kalau terisi, angka tidak terdefinisi dan alasannya wajib tampil. */
   undefinedReason?: string;
+  /**
+   * Hasil hitungan yang mustahil ditulis "Tidak terdefinisi"; data yang belum
+   * pernah diambil ditulis "Tidak tersedia". Keduanya bukan hal yang sama.
+   */
+  undefinedLabel?: string;
 }) {
   return (
     <div className="rounded-[12px] border border-line bg-surface px-4 py-3.5">
@@ -19,7 +25,7 @@ export function MetricTile({
       {undefinedReason ? (
         <>
           <p className="text-[17px] font-semibold text-ink-500">
-            Tidak terdefinisi
+            {undefinedLabel}
           </p>
           <p className="mt-1 text-[12px] leading-snug text-warn-600">
             {undefinedReason}

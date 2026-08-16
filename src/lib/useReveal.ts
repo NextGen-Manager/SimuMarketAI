@@ -20,8 +20,8 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
-      setTerlihat(true);
-      return;
+      const frame = requestAnimationFrame(() => setTerlihat(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const obs = new IntersectionObserver(
@@ -81,8 +81,8 @@ export function useCountUp(target: number, durasi = 1200) {
     if (!terlihat) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setNilai(target);
-      return;
+      const frame = requestAnimationFrame(() => setNilai(target));
+      return () => cancelAnimationFrame(frame);
     }
 
     let raf = 0;
