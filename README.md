@@ -1,57 +1,127 @@
 # SimuMarketAI Frontend
 
-Frontend web untuk **SimuMarketAI**, decision-support toolkit bagi calon dan pelaku UMKM F&B di Jabodetabek.
+Frontend web SimuMarket AI, platform pendukung keputusan untuk calon pengusaha dan pemilik UMKM F&B di Jabodetabek.
 
-## Status
+**[Cara menjalankan](#cara-menjalankan)** · [Tech stack](#tech-stack) · [Struktur repository](#struktur-repository) · [Quality checks](#quality-checks) · [Dokumentasi teknis](https://github.com/NextGen-Manager/Docs)
 
-Repository ini baru diinisialisasi. Belum ada source code aplikasi. Kontrak produk, arsitektur, dan API sedang didefinisikan terlebih dahulu di repository [Docs](https://github.com/NextGen-Manager/Docs).
+## Tentang repository
 
-## Tanggung jawab repository
+Repository ini menangani seluruh pengalaman pengguna SimuMarket AI:
 
-- Landing page, autentikasi, dan dashboard pengguna.
-- Modul edukasi bisnis F&B dan progress pengguna.
-- Wizard Market Analysis serta live status proses agent.
-- Market Analysis Report dan perbandingan skenario.
-- Input transaksi manual, batch, dan melalui foto struk, termasuk review hasil OCR sebelum disimpan.
-- Transaction Analytics Dashboard.
-- Export/download laporan yang dihasilkan backend.
-- UI berbahasa Indonesia, responsif, dan memenuhi aksesibilitas dasar WCAG 2.1.
+- autentikasi dan ruang kerja berbasis peran pemilik serta kasir;
+- edukasi bisnis F&B dan education gate;
+- input Market Analysis, progres simulasi, riwayat, dan laporan;
+- pengelolaan usaha, produk, transaksi, serta analitik operasional;
+- review foto struk sebelum transaksi disimpan;
+- export laporan melalui artifact backend;
+- interactive demo berbasis data seed pada rute `/demo`.
 
-## Stack target
+Frontend tidak menghitung skor, BEP, marjin, total transaksi, atau metrik otoritatif lain. Nilai tersebut berasal dari backend dan hanya divalidasi bentuknya, diformat, lalu ditampilkan bersama provenance, confidence, warning, serta disclaimer.
 
-- Next.js 16 (Active LTS)
-- React 19
-- TypeScript, `strict: true`
-- Tailwind CSS v4
+## Cara menjalankan
 
-Proposal awal menyebut Next.js 14. Versi itu mencapai end of life pada 26 Oktober 2025 dan tidak lagi menerima patch keamanan, sehingga baseline dinaikkan ke 16 melalui [ADR-002](https://github.com/NextGen-Manager/Docs/blob/main/docs/adr/ADR-002-frontend-framework-version.md).
+Prasyarat:
 
-Next.js tidak memiliki jalur LTS terpisah: setiap major aktif selama ia terbaru, lalu berstatus maintenance sampai dua tahun sejak rilisnya. Versi 16 terbit Oktober 2025, jadi dukungannya berjalan sampai sekitar Oktober 2027 — melewati masa kompetisi.
+- Node.js 22 LTS;
+- npm;
+- backend SimuMarket AI bila ingin memakai alur aplikasi nyata.
 
-Ketika Next.js 17 terbit, **jangan langsung naik**. Versi 16 tetap menerima patch keamanan. Kenaikan major berikutnya memerlukan ADR baru.
+```bash
+git clone https://github.com/NextGen-Manager/SimuMarketAI.git
+cd SimuMarketAI
+npm ci
+```
 
-## Batas arsitektur
+Salin konfigurasi lokal:
 
-Frontend tidak menghitung skor, BEP, atau metrik finansial. Semua perhitungan otoritatif dilakukan backend. Frontend hanya memvalidasi bentuk input, menampilkan status job, dan merender output beserta provenance, confidence, serta disclaimer DSS.
+```bash
+cp .env.example .env.local
+```
 
-## Rencana struktur
+Pada PowerShell gunakan:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Nilai bawaan mengarahkan proxy server-side ke backend lokal:
+
+```dotenv
+BACKEND_URL=http://localhost:8000
+```
+
+Jalankan development server:
+
+```bash
+npm run dev
+```
+
+Buka `http://localhost:3000`. Interactive demo tersedia di `http://localhost:3000/demo`.
+
+Untuk memeriksa production build:
+
+```bash
+npm run build
+npm run start
+```
+
+## Tech stack
+
+| Bagian | Teknologi |
+|---|---|
+| Framework | Next.js 16, App Router |
+| UI runtime | React 19 |
+| Bahasa | TypeScript dengan strict mode |
+| Styling | Tailwind CSS 4 |
+| Validasi kontrak | Zod 4 |
+| Peta | Leaflet dan OpenStreetMap |
+| Animasi | GSAP dengan dukungan reduced motion |
+| Unit/component test | Vitest dan Testing Library |
+| Browser test | Playwright, Chromium, Firefox, WebKit |
+| Accessibility audit | axe-core melalui Playwright |
+
+Kenaikan major framework harus melalui ADR. Keputusan penggunaan Next.js 16 tercatat pada [ADR-002](https://github.com/NextGen-Manager/Docs/blob/main/docs/adr/ADR-002-frontend-framework-version.md).
+
+## Struktur repository
 
 ```text
 src/
-  app/             # route dan layout Next.js
-  components/      # komponen UI reusable
-  features/        # auth, education, market-analysis, transactions
-  lib/             # API client, validation, formatting
-  types/           # DTO hasil generate dari OpenAPI
-tests/
+  app/             route, layout, proxy backend, dan demo
+  components/      primitive UI, layout, dan landing page
+  features/        auth, analysis, education, business, transaction, analytics
+  lib/             API client, kontrak Zod, formatter, dan access policy
+  demo/            komponen serta data seed interactive demo
+tests/              unit dan component tests
+e2e/                browser, accessibility, RBAC, analysis, dan receipt flows
 ```
 
-## Dokumen acuan
+Kontrak response API berada di `src/lib/contracts`. Komponen tidak mendefinisikan ulang DTO dan tidak menghitung ulang nilai yang dikirim backend.
 
+## Quality checks
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run test:e2e
+npm run build
+npm audit --omit=dev
+```
+
+Playwright menjalankan browser matrix Chromium, Firefox, dan WebKit. CI juga memeriksa WCAG 2.1 A/AA secara otomatis pada halaman publik utama.
+
+## Branch dan deployment
+
+- `dev` adalah branch integrasi pengembangan.
+- `main` menyimpan baseline stabil dan menjalankan CI, tetapi tidak menjalankan workflow production frontend.
+- `demo` adalah satu-satunya branch yang memicu workflow production Vercel di repository ini.
+
+Jika Vercel Git Integration diaktifkan langsung dari dashboard Vercel, atur **Production Branch** ke `demo` agar konsisten dengan workflow repository.
+
+## Dokumentasi
+
+- [Dokumentasi SimuMarket AI](https://github.com/NextGen-Manager/Docs)
 - [Arsitektur sistem](https://github.com/NextGen-Manager/Docs/blob/main/docs/02-system-architecture.md)
 - [Kontrak API](https://github.com/NextGen-Manager/Docs/blob/main/docs/06-api-contract.md)
-- [Roadmap MVP](https://github.com/NextGen-Manager/Docs/blob/main/docs/09-mvp-roadmap.md)
-
-## Menjalankan aplikasi
-
-Belum tersedia. Instruksi instalasi, environment variables, testing, dan build wajib ditambahkan ketika scaffold frontend dibuat.
+- [Alur aplikasi](https://github.com/NextGen-Manager/Docs/blob/main/docs/12-application-workflow.md)
+- [Sistem UI](https://github.com/NextGen-Manager/Docs/blob/main/docs/13-ui-system-and-mock-plan.md)
